@@ -33,8 +33,14 @@ export const env = createEnv({
 	/**
 	 * What object holds the environment variables at runtime. This is usually
 	 * `process.env` or `import.meta.env`.
+	 *
+	 * Server-side variables are accessed via process.env (nitro runtime),
+	 * while client-side VITE_* variables come from import.meta.env.
 	 */
-	runtimeEnv: import.meta.env,
+	runtimeEnv: {
+		...process.env,
+		...import.meta.env,
+	},
 
 	/**
 	 * By default, this library will feed the environment variables directly to
