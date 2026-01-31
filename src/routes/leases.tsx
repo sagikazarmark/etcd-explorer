@@ -97,7 +97,7 @@ function LeasesPage() {
             {leases.map((lease) => {
               const percentage = getTtlPercentage(lease.ttl, lease.grantedTtl);
               return (
-                <Row key={lease.id} className="items-start py-4">
+                <Row key={lease.id} className="flex items-center">
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-3">
                       <Clock className="h-4 w-4 text-muted-foreground" />

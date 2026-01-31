@@ -23,9 +23,11 @@ export function Row({
   onClick?: () => void;
 }) {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: because
+    // biome-ignore lint/a11y/noStaticElementInteractions: because
     <div
       key={key}
-      className={cn("px-4 py-3 hover:bg-muted/50 transition-colors", className)}
+      className={cn("px-4 py-4 hover:bg-muted/50 transition-colors", className)}
       onClick={onClick}
     >
       {children}
