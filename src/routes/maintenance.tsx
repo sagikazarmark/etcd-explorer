@@ -37,7 +37,7 @@ function MaintenancePage() {
   })
 
   const compactMutation = useMutation({
-    mutationFn: () => compact(),
+    mutationFn: () => compact({ data: {} }),
     onSuccess: () => {
       toast.success('Compaction complete')
     },

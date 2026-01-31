@@ -40,6 +40,7 @@
     "@tanstack/router-plugin": "^1.132.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "etcd3": "^1.1.2",
     "lucide-react": "^0.561.0",
     "next-themes": "^0.4.6",
     "nitro": "npm:nitro-nightly@latest",

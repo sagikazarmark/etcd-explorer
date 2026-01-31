@@ -4,6 +4,20 @@ import { z } from 'zod'
 export const env = createEnv({
   server: {
     SERVER_URL: z.string().url().optional(),
+
+    // etcd Connection
+    ETCD_ENDPOINTS: z.string().default('http://localhost:2379'),
+    ETCD_USERNAME: z.string().optional(),
+    ETCD_PASSWORD: z.string().optional(),
+
+    // TLS (optional)
+    ETCD_CA_CERT: z.string().optional(),
+    ETCD_CLIENT_CERT: z.string().optional(),
+    ETCD_CLIENT_KEY: z.string().optional(),
+
+    // Settings
+    ETCD_DIAL_TIMEOUT: z.coerce.number().default(30000),
+    ETCD_MOCK_MODE: z.enum(['true', 'false']).default('false'),
   },
 
   /**
