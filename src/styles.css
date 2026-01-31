@@ -1,6 +1,6 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -125,44 +125,6 @@
   @apply text-primary hover:underline cursor-pointer;
 }
 
-@utility etcd-nav-item {
-  /* etcd navigation item */
-  @apply flex items-center gap-3 px-4 py-2.5 text-sidebar-foreground rounded transition-colors;
-  @apply hover:bg-sidebar-accent hover:text-sidebar-accent-foreground;
-}
-
-@utility etcd-nav-item-active {
-  @apply bg-sidebar-primary text-sidebar-primary-foreground;
-}
-
-@utility etcd-section-header {
-  /* etcd section header */
-  @apply text-xs font-medium uppercase tracking-wider text-sidebar-muted px-4 py-2;
-}
-
-@utility key-path {
-  /* Key path display */
-  @apply font-mono text-sm;
-}
-
-@utility etcd-table-row {
-  /* etcd table row */
-  @apply border-b border-border hover:bg-muted/50 transition-colors;
-}
-
-@utility status-healthy {
-  /* Status indicators */
-  @apply w-2 h-2 rounded-full bg-success;
-}
-
-@utility status-unhealthy {
-  @apply w-2 h-2 rounded-full bg-destructive;
-}
-
-@utility animate-fade-in {
-  animation: fadeIn 0.2s ease-out;
-}
-
 @layer base {
   :root {
     /* etcd-inspired light theme - clean white content with dark accents */
@@ -215,8 +177,9 @@
     --sidebar-muted: 220 10% 45%;
 
     /* Font families */
-    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --font-sans:
+      system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   .dark {
@@ -276,14 +239,9 @@
     font-family: var(--font-sans);
   }
 
-  code, pre, .font-mono {
+  code,
+  pre,
+  .font-mono {
     font-family: var(--font-mono);
-  }
-}
-
-@layer utilities {
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
   }
 }
