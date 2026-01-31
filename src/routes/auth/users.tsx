@@ -1,224 +1,246 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { EtcdLayout } from '@/components/EtcdLayout'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Plus, User, MoreHorizontal } from 'lucide-react'
+import { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { AddUserDialog } from '@/components/AddUserDialog'
-import { UserDetailsDialog } from '@/components/UserDetailsDialog'
-import { GrantRoleDialog } from '@/components/GrantRoleDialog'
-import { ChangePasswordDialog } from '@/components/ChangePasswordDialog'
-import { DeleteConfirmDialog } from '@/components/DeleteConfirmDialog'
-import { toast } from 'sonner'
-import { usersQueryOptions, rolesQueryOptions, authStatusQueryOptions } from '@/lib/queries/etcd'
-import { addUser, deleteUser, grantUserRole } from '@/lib/server/etcd'
-import type { EtcdUser } from '@/lib/types/etcd'
+	useSuspenseQuery,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
+import { EtcdLayout } from "@/components/EtcdLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Plus, User, MoreHorizontal } from "lucide-react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { AddUserDialog } from "@/components/AddUserDialog";
+import { UserDetailsDialog } from "@/components/UserDetailsDialog";
+import { GrantRoleDialog } from "@/components/GrantRoleDialog";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
+import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
+import { toast } from "sonner";
+import {
+	usersQueryOptions,
+	rolesQueryOptions,
+	authStatusQueryOptions,
+} from "@/lib/queries/etcd";
+import { addUser, deleteUser, grantUserRole } from "@/lib/server/etcd";
+import type { EtcdUser } from "@/lib/types/etcd";
 
-export const Route = createFileRoute('/auth/users')({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(usersQueryOptions()),
-      queryClient.ensureQueryData(rolesQueryOptions()),
-      queryClient.ensureQueryData(authStatusQueryOptions()),
-    ])
-  },
-  component: UsersPage,
-})
+export const Route = createFileRoute("/auth/users")({
+	loader: async ({ context: { queryClient } }) => {
+		await Promise.all([
+			queryClient.ensureQueryData(usersQueryOptions()),
+			queryClient.ensureQueryData(rolesQueryOptions()),
+			queryClient.ensureQueryData(authStatusQueryOptions()),
+		]);
+	},
+	component: UsersPage,
+});
 
 function UsersPage() {
-  const queryClient = useQueryClient()
-  const { data: users } = useSuspenseQuery(usersQueryOptions())
-  const { data: roles } = useSuspenseQuery(rolesQueryOptions())
-  const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions())
+	const queryClient = useQueryClient();
+	const { data: users } = useSuspenseQuery(usersQueryOptions());
+	const { data: roles } = useSuspenseQuery(rolesQueryOptions());
+	const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions());
 
-  const [addDialogOpen, setAddDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<EtcdUser | null>(null)
-  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
-  const [grantRoleDialogOpen, setGrantRoleDialogOpen] = useState(false)
-  const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+	const [addDialogOpen, setAddDialogOpen] = useState(false);
+	const [selectedUser, setSelectedUser] = useState<EtcdUser | null>(null);
+	const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+	const [grantRoleDialogOpen, setGrantRoleDialogOpen] = useState(false);
+	const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
+		useState(false);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const addUserMutation = useMutation({
-    mutationFn: (data: { name: string; password: string; roles: string[] }) =>
-      addUser({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-    },
-  })
+	const addUserMutation = useMutation({
+		mutationFn: (data: { name: string; password: string; roles: string[] }) =>
+			addUser({ data }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["users"] });
+		},
+	});
 
-  const grantRoleMutation = useMutation({
-    mutationFn: (data: { userName: string; role: string }) =>
-      grantUserRole({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-    },
-  })
+	const grantRoleMutation = useMutation({
+		mutationFn: (data: { userName: string; role: string }) =>
+			grantUserRole({ data }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["users"] });
+		},
+	});
 
-  const deleteUserMutation = useMutation({
-    mutationFn: (name: string) => deleteUser({ data: { name } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] })
-    },
-  })
+	const deleteUserMutation = useMutation({
+		mutationFn: (name: string) => deleteUser({ data: { name } }),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["users"] });
+		},
+	});
 
-  const handleUserAdded = (newUser: { name: string; password: string; roles: string[] }) => {
-    addUserMutation.mutate(newUser)
-  }
+	const handleUserAdded = (newUser: {
+		name: string;
+		password: string;
+		roles: string[];
+	}) => {
+		addUserMutation.mutate(newUser);
+	};
 
-  const handleRoleGranted = (userName: string, role: string) => {
-    grantRoleMutation.mutate({ userName, role })
-  }
+	const handleRoleGranted = (userName: string, role: string) => {
+		grantRoleMutation.mutate({ userName, role });
+	};
 
-  const handleDeleteUser = () => {
-    if (!selectedUser) return
-    deleteUserMutation.mutate(selectedUser.name, {
-      onSuccess: () => {
-        toast.success('User deleted', {
-          description: `User "${selectedUser.name}" has been deleted.`,
-        })
-        setDeleteDialogOpen(false)
-        setSelectedUser(null)
-      },
-    })
-  }
+	const handleDeleteUser = () => {
+		if (!selectedUser) return;
+		deleteUserMutation.mutate(selectedUser.name, {
+			onSuccess: () => {
+				toast.success("User deleted", {
+					description: `User "${selectedUser.name}" has been deleted.`,
+				});
+				setDeleteDialogOpen(false);
+				setSelectedUser(null);
+			},
+		});
+	};
 
-  const openDialog = (user: EtcdUser, dialog: 'details' | 'grantRole' | 'changePassword' | 'delete') => {
-    setSelectedUser(user)
-    switch (dialog) {
-      case 'details':
-        setDetailsDialogOpen(true)
-        break
-      case 'grantRole':
-        setGrantRoleDialogOpen(true)
-        break
-      case 'changePassword':
-        setChangePasswordDialogOpen(true)
-        break
-      case 'delete':
-        setDeleteDialogOpen(true)
-        break
-    }
-  }
+	const openDialog = (
+		user: EtcdUser,
+		dialog: "details" | "grantRole" | "changePassword" | "delete",
+	) => {
+		setSelectedUser(user);
+		switch (dialog) {
+			case "details":
+				setDetailsDialogOpen(true);
+				break;
+			case "grantRole":
+				setGrantRoleDialogOpen(true);
+				break;
+			case "changePassword":
+				setChangePasswordDialogOpen(true);
+				break;
+			case "delete":
+				setDeleteDialogOpen(true);
+				break;
+		}
+	};
 
-  return (
-    <EtcdLayout
-      title="Users"
-      breadcrumbs={[{ label: 'Auth' }, { label: 'Users' }]}
-    >
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <p className="text-muted-foreground">
-              Manage etcd users for authentication and access control.
-            </p>
-            {!authStatus.enabled && (
-              <Badge variant="secondary" className="text-xs">
-                Auth disabled
-              </Badge>
-            )}
-          </div>
-          <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Add user
-          </Button>
-        </div>
+	return (
+		<EtcdLayout
+			title="Users"
+			breadcrumbs={[{ label: "Auth" }, { label: "Users" }]}
+		>
+			<div className="space-y-4">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-3">
+						<p className="text-muted-foreground">
+							Manage etcd users for authentication and access control.
+						</p>
+						{!authStatus.enabled && (
+							<Badge variant="secondary" className="text-xs">
+								Auth disabled
+							</Badge>
+						)}
+					</div>
+					<Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
+						<Plus className="h-4 w-4" />
+						Add user
+					</Button>
+				</div>
 
-        <Card className="etcd-card">
-          <CardContent className="p-0">
-            <div className="divide-y divide-border">
-              {users.map((user) => (
-                <div
-                  key={user.name}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <span className="font-medium font-mono">{user.name}</span>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        {user.roles.map((role) => (
-                          <Badge
-                            key={role}
-                            variant={role === 'root' ? 'default' : 'secondary'}
-                            className="text-xs"
-                          >
-                            {role}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => openDialog(user, 'details')}>
-                        View details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openDialog(user, 'grantRole')}>
-                        Grant role
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => openDialog(user, 'changePassword')}>
-                        Change password
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => openDialog(user, 'delete')}
-                      >
-                        Delete user
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+				<Card className="etcd-card">
+					<CardContent className="p-0">
+						<div className="divide-y divide-border">
+							{users.map((user) => (
+								<div
+									key={user.name}
+									className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
+								>
+									<div className="flex items-center gap-3">
+										<div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+											<User className="h-4 w-4 text-muted-foreground" />
+										</div>
+										<div>
+											<span className="font-medium font-mono">{user.name}</span>
+											<div className="flex items-center gap-1.5 mt-1">
+												{user.roles.map((role) => (
+													<Badge
+														key={role}
+														variant={role === "root" ? "default" : "secondary"}
+														className="text-xs"
+													>
+														{role}
+													</Badge>
+												))}
+											</div>
+										</div>
+									</div>
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button variant="ghost" size="icon" className="h-8 w-8">
+												<MoreHorizontal className="h-4 w-4" />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent align="end">
+											<DropdownMenuItem
+												onClick={() => openDialog(user, "details")}
+											>
+												View details
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => openDialog(user, "grantRole")}
+											>
+												Grant role
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => openDialog(user, "changePassword")}
+											>
+												Change password
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												className="text-destructive"
+												onClick={() => openDialog(user, "delete")}
+											>
+												Delete user
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 
-      <AddUserDialog
-        open={addDialogOpen}
-        onOpenChange={setAddDialogOpen}
-        onUserAdded={handleUserAdded}
-        roles={roles}
-      />
-      <UserDetailsDialog
-        open={detailsDialogOpen}
-        onOpenChange={setDetailsDialogOpen}
-        user={selectedUser}
-      />
-      <GrantRoleDialog
-        open={grantRoleDialogOpen}
-        onOpenChange={setGrantRoleDialogOpen}
-        user={selectedUser}
-        onRoleGranted={handleRoleGranted}
-        roles={roles}
-      />
-      <ChangePasswordDialog
-        open={changePasswordDialogOpen}
-        onOpenChange={setChangePasswordDialogOpen}
-        user={selectedUser}
-      />
-      <DeleteConfirmDialog
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        title="Delete User"
-        description={`Are you sure you want to delete user "${selectedUser?.name}"? This action cannot be undone.`}
-        onConfirm={handleDeleteUser}
-      />
-    </EtcdLayout>
-  )
+			<AddUserDialog
+				open={addDialogOpen}
+				onOpenChange={setAddDialogOpen}
+				onUserAdded={handleUserAdded}
+				roles={roles}
+			/>
+			<UserDetailsDialog
+				open={detailsDialogOpen}
+				onOpenChange={setDetailsDialogOpen}
+				user={selectedUser}
+			/>
+			<GrantRoleDialog
+				open={grantRoleDialogOpen}
+				onOpenChange={setGrantRoleDialogOpen}
+				user={selectedUser}
+				onRoleGranted={handleRoleGranted}
+				roles={roles}
+			/>
+			<ChangePasswordDialog
+				open={changePasswordDialogOpen}
+				onOpenChange={setChangePasswordDialogOpen}
+				user={selectedUser}
+			/>
+			<DeleteConfirmDialog
+				open={deleteDialogOpen}
+				onOpenChange={setDeleteDialogOpen}
+				title="Delete User"
+				description={`Are you sure you want to delete user "${selectedUser?.name}"? This action cannot be undone.`}
+				onConfirm={handleDeleteUser}
+			/>
+		</EtcdLayout>
+	);
 }
