@@ -1,7 +1,12 @@
 import { Etcd3, type IOptions } from "etcd3";
 import { env } from "../../env";
+import type { EtcdClientInterface } from "./etcd-client-interface";
+import { RealEtcdClient } from "./real-etcd-client";
+import { MockEtcdClient } from "./mock-etcd-client";
 
-let client: Etcd3 | null = null;
+let etcd3Client: Etcd3 | null = null;
+let realClient: RealEtcdClient | null = null;
+let mockClient: MockEtcdClient | null = null;
 
 /**
  * Check if mock mode is enabled
@@ -45,33 +50,47 @@ function buildClientOptions(): IOptions {
 }
 
 /**
- * Get the singleton etcd3 client instance
+ * Get the configured endpoints as an array
  */
-export function getEtcdClient(): Etcd3 {
+export function getEndpoints(): string[] {
+	return env.ETCD_ENDPOINTS.split(",").map((h) => h.trim());
+}
+
+/**
+ * Get the singleton etcd3 client instance (for internal use by RealEtcdClient)
+ */
+function getEtcd3Client(): Etcd3 {
+	if (!etcd3Client) {
+		etcd3Client = new Etcd3(buildClientOptions());
+	}
+	return etcd3Client;
+}
+
+/**
+ * Get the unified etcd client interface.
+ * Returns MockEtcdClient when mock mode is enabled, otherwise RealEtcdClient.
+ */
+export function getClient(): EtcdClientInterface {
 	if (isMockMode()) {
-		throw new Error("Cannot get etcd client in mock mode");
+		if (!mockClient) {
+			mockClient = new MockEtcdClient();
+		}
+		return mockClient;
 	}
 
-	if (!client) {
-		client = new Etcd3(buildClientOptions());
+	if (!realClient) {
+		realClient = new RealEtcdClient(getEtcd3Client(), getEndpoints());
 	}
-
-	return client;
+	return realClient;
 }
 
 /**
  * Close the etcd3 client connection
  */
 export async function closeEtcdClient(): Promise<void> {
-	if (client) {
-		client.close();
-		client = null;
+	if (etcd3Client) {
+		etcd3Client.close();
+		etcd3Client = null;
+		realClient = null;
 	}
-}
-
-/**
- * Get the configured endpoints as an array
- */
-export function getEndpoints(): string[] {
-	return env.ETCD_ENDPOINTS.split(",").map((h) => h.trim());
 }
