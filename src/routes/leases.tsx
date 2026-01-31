@@ -71,7 +71,7 @@ function LeasesPage() {
   };
 
   return (
-    <EtcdLayout title="Leases" breadcrumbs={[{ label: "Leases" }]}>
+    <EtcdLayout title="Leases">
       <div className="space-y-4">
         <div className="flex justify-end">
           <Button className="gap-2">
