@@ -9,7 +9,14 @@ import { EtcdLayout } from "@/components/EtcdLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, User, MoreHorizontal } from "lucide-react";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from "@/components/ui/empty";
+import { Plus, User, Users, MoreHorizontal } from "lucide-react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -147,68 +154,82 @@ function UsersPage() {
 					</Button>
 				</div>
 
-				<Card className="etcd-card">
-					<CardContent className="p-0">
-						<div className="divide-y divide-border">
-							{users.map((user) => (
-								<div
-									key={user.name}
-									className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
-								>
-									<div className="flex items-center gap-3">
-										<div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-											<User className="h-4 w-4 text-muted-foreground" />
-										</div>
-										<div>
-											<span className="font-medium font-mono">{user.name}</span>
-											<div className="flex items-center gap-1.5 mt-1">
-												{user.roles.map((role) => (
-													<Badge
-														key={role}
-														variant={role === "root" ? "default" : "secondary"}
-														className="text-xs"
-													>
-														{role}
-													</Badge>
-												))}
+				{users.length === 0 ? (
+					<Empty className="border bg-muted/30">
+						<EmptyHeader>
+							<EmptyMedia variant="icon">
+								<Users />
+							</EmptyMedia>
+							<EmptyTitle>No users</EmptyTitle>
+							<EmptyDescription>
+								Add a user to manage authentication and access control.
+							</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
+				) : (
+					<Card className="etcd-card">
+						<CardContent className="p-0">
+							<div className="divide-y divide-border">
+								{users.map((user) => (
+									<div
+										key={user.name}
+										className="flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
+									>
+										<div className="flex items-center gap-3">
+											<div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+												<User className="h-4 w-4 text-muted-foreground" />
+											</div>
+											<div>
+												<span className="font-medium font-mono">{user.name}</span>
+												<div className="flex items-center gap-1.5 mt-1">
+													{user.roles.map((role) => (
+														<Badge
+															key={role}
+															variant={role === "root" ? "default" : "secondary"}
+															className="text-xs"
+														>
+															{role}
+														</Badge>
+													))}
+												</div>
 											</div>
 										</div>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost" size="icon" className="h-8 w-8">
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem
+													onClick={() => openDialog(user, "details")}
+												>
+													View details
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={() => openDialog(user, "grantRole")}
+												>
+													Grant role
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={() => openDialog(user, "changePassword")}
+												>
+													Change password
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													className="text-destructive"
+													onClick={() => openDialog(user, "delete")}
+												>
+													Delete user
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
 									</div>
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon" className="h-8 w-8">
-												<MoreHorizontal className="h-4 w-4" />
-											</Button>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="end">
-											<DropdownMenuItem
-												onClick={() => openDialog(user, "details")}
-											>
-												View details
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => openDialog(user, "grantRole")}
-											>
-												Grant role
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => openDialog(user, "changePassword")}
-											>
-												Change password
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												className="text-destructive"
-												onClick={() => openDialog(user, "delete")}
-											>
-												Delete user
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
-								</div>
-							))}
-						</div>
-					</CardContent>
-				</Card>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				)}
 			</div>
 
 			<AddUserDialog
