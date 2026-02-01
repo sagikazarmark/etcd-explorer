@@ -12,7 +12,6 @@ import {
   Shield,
   Sun,
   Users,
-  Wrench,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -52,10 +51,6 @@ const clusterItems: NavItem[] = [
   { title: "Members", url: "/cluster/members", icon: Server },
   { title: "Endpoints", url: "/cluster/endpoints", icon: Activity },
   { title: "Alarms", url: "/cluster/alarms", icon: AlertTriangle },
-];
-
-const maintenanceItems: NavItem[] = [
-  { title: "Maintenance", url: "/maintenance", icon: Wrench },
 ];
 
 export function AppSidebar() {
@@ -150,13 +145,6 @@ export function AppSidebar() {
           <SidebarGroupLabel>Cluster</SidebarGroupLabel>
           <SidebarGroupContent>
             {renderMenuItems(clusterItems)}
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Maintenance */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            {renderMenuItems(maintenanceItems)}
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

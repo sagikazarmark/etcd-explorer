@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MaintenanceRouteImport } from './routes/maintenance'
 import { Route as LeasesRouteImport } from './routes/leases'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KeysIndexRouteImport } from './routes/keys/index'
@@ -20,11 +19,6 @@ import { Route as ClusterAlarmsRouteImport } from './routes/cluster/alarms'
 import { Route as AuthUsersRouteImport } from './routes/auth/users'
 import { Route as AuthRolesRouteImport } from './routes/auth/roles'
 
-const MaintenanceRoute = MaintenanceRouteImport.update({
-  id: '/maintenance',
-  path: '/maintenance',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LeasesRoute = LeasesRouteImport.update({
   id: '/leases',
   path: '/leases',
@@ -74,7 +68,6 @@ const AuthRolesRoute = AuthRolesRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/leases': typeof LeasesRoute
-  '/maintenance': typeof MaintenanceRoute
   '/auth/roles': typeof AuthRolesRoute
   '/auth/users': typeof AuthUsersRoute
   '/cluster/alarms': typeof ClusterAlarmsRoute
@@ -86,7 +79,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/leases': typeof LeasesRoute
-  '/maintenance': typeof MaintenanceRoute
   '/auth/roles': typeof AuthRolesRoute
   '/auth/users': typeof AuthUsersRoute
   '/cluster/alarms': typeof ClusterAlarmsRoute
@@ -99,7 +91,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/leases': typeof LeasesRoute
-  '/maintenance': typeof MaintenanceRoute
   '/auth/roles': typeof AuthRolesRoute
   '/auth/users': typeof AuthUsersRoute
   '/cluster/alarms': typeof ClusterAlarmsRoute
@@ -113,7 +104,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/leases'
-    | '/maintenance'
     | '/auth/roles'
     | '/auth/users'
     | '/cluster/alarms'
@@ -125,7 +115,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/leases'
-    | '/maintenance'
     | '/auth/roles'
     | '/auth/users'
     | '/cluster/alarms'
@@ -137,7 +126,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/leases'
-    | '/maintenance'
     | '/auth/roles'
     | '/auth/users'
     | '/cluster/alarms'
@@ -150,7 +138,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LeasesRoute: typeof LeasesRoute
-  MaintenanceRoute: typeof MaintenanceRoute
   AuthRolesRoute: typeof AuthRolesRoute
   AuthUsersRoute: typeof AuthUsersRoute
   ClusterAlarmsRoute: typeof ClusterAlarmsRoute
@@ -162,13 +149,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/maintenance': {
-      id: '/maintenance'
-      path: '/maintenance'
-      fullPath: '/maintenance'
-      preLoaderRoute: typeof MaintenanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/leases': {
       id: '/leases'
       path: '/leases'
@@ -238,7 +218,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LeasesRoute: LeasesRoute,
-  MaintenanceRoute: MaintenanceRoute,
   AuthRolesRoute: AuthRolesRoute,
   AuthUsersRoute: AuthUsersRoute,
   ClusterAlarmsRoute: ClusterAlarmsRoute,

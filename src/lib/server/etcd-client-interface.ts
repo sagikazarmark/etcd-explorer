@@ -76,9 +76,4 @@ export interface EtcdClientInterface {
   // ============ Endpoints ============
   getEndpointHealth(): Promise<EtcdEndpointHealth[]>;
   getEndpointStatus(): Promise<EtcdEndpointStatus[]>;
-
-  // ============ Maintenance ============
-  defragment(): Promise<{ success: boolean; message: string }>;
-  compact(revision?: number): Promise<{ success: boolean; message: string }>;
-  snapshot(): Promise<{ success: boolean; path: string }>;
 }

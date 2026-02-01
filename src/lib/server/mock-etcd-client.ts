@@ -284,20 +284,4 @@ export class MockEtcdClient implements EtcdClientInterface {
   async getEndpointStatus(): Promise<EtcdEndpointStatus[]> {
     return mockEndpointStatus;
   }
-
-  // ============ Maintenance ============
-
-  async defragment(): Promise<{ success: boolean; message: string }> {
-    return { success: true, message: "Defragmentation completed" };
-  }
-
-  async compact(
-    _revision?: number,
-  ): Promise<{ success: boolean; message: string }> {
-    return { success: true, message: "Compaction completed" };
-  }
-
-  async snapshot(): Promise<{ success: boolean; path: string }> {
-    return { success: true, path: "/tmp/etcd-snapshot.db" };
-  }
 }

@@ -244,23 +244,3 @@ export const getEndpointStatus = createServerFn({ method: "GET" }).handler(
     return getClient().getEndpointStatus();
   },
 );
-
-// ============ Maintenance ============
-
-export const defragment = createServerFn({ method: "POST" }).handler(
-  async (): Promise<{ success: boolean; message: string }> => {
-    return getClient().defragment();
-  },
-);
-
-export const compact = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ revision: z.number().optional() }))
-  .handler(async ({ data }): Promise<{ success: boolean; message: string }> => {
-    return getClient().compact(data.revision);
-  });
-
-export const snapshot = createServerFn({ method: "POST" }).handler(
-  async (): Promise<{ success: boolean; path: string }> => {
-    return getClient().snapshot();
-  },
-);
