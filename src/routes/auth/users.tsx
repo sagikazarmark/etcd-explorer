@@ -32,7 +32,7 @@ function UsersPage() {
 
   return (
     <PageLayout
-      title={
+      header={
         <PageTitle title="Users">
           {!authStatus.enabled && (
             <Badge variant="secondary" className="text-xs">

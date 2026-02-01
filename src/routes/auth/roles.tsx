@@ -42,7 +42,7 @@ function RolesPage() {
 
   return (
     <PageLayout
-      title={
+      header={
         <PageTitle title="Roles">
           {!authStatus.enabled && (
             <Badge variant="secondary" className="text-xs">

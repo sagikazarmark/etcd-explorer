@@ -1,20 +1,21 @@
-import { isValidElement, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { PageTitle, type PageTitleProps } from "./PageTitle";
+import { PageTitle } from "./PageTitle";
 
 interface PageLayoutProps {
   children: ReactNode;
-  title?: ReactNode;
+  header?: ReactNode;
+  title?: string;
   breadcrumbs?: Array<{ label: string; href?: string }>;
 }
-function isPageTitle(
-  node: ReactNode,
-): node is React.ReactElement<PageTitleProps> {
-  return isValidElement(node) && node.type === PageTitle;
-}
 
-export function PageLayout({ children, title, breadcrumbs }: PageLayoutProps) {
+export function PageLayout({
+  children,
+  header,
+  title,
+  breadcrumbs,
+}: PageLayoutProps) {
   return (
     <>
       <header className="shrink-0 border-b border-border bg-card px-6 py-4">
@@ -41,9 +42,8 @@ export function PageLayout({ children, title, breadcrumbs }: PageLayoutProps) {
           </nav>
         )}
 
-        {/* Title */}
-        {title &&
-          (isPageTitle(title) ? title : <PageTitle title={String(title)} />)}
+        {/* Header/Title */}
+        {header ? header : title && <PageTitle title={title} />}
       </header>
 
       <main className="flex-1 overflow-auto p-6">{children}</main>
