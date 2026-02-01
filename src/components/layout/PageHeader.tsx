@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+import { PageTitle } from "./PageTitle";
 
 interface PageHeaderProps {
   title?: string;
@@ -35,12 +36,7 @@ export function PageHeader({
       )}
 
       {/* Title */}
-      {title && (
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
-          {titleSuffix}
-        </div>
-      )}
+      {title && <PageTitle title={title}>{titleSuffix}</PageTitle>}
     </header>
   );
 }
