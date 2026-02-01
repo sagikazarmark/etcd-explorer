@@ -157,10 +157,7 @@ function MembersPage() {
   };
 
   return (
-    <EtcdLayout
-      title="Members"
-      breadcrumbs={[{ label: "Cluster" }, { label: "Members" }]}
-    >
+    <EtcdLayout title="Members">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">

@@ -141,13 +141,9 @@ function UsersPage() {
           </Badge>
         )
       }
-      breadcrumbs={[{ label: "Auth" }, { label: "Users" }]}
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
-            Manage etcd users for authentication and access control.
-          </p>
+        <div className="flex items-center justify-end">
           <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
             <Plus className="h-4 w-4" />
             Add user

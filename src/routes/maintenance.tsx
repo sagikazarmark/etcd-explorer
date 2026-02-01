@@ -64,7 +64,7 @@ function MaintenancePage() {
     totalDbSize > 0 ? ((fragmentation / totalDbSize) * 100).toFixed(1) : "0";
 
   return (
-    <EtcdLayout title="Maintenance" breadcrumbs={[{ label: "Maintenance" }]}>
+    <EtcdLayout title="Maintenance">
       <div className="space-y-6">
         <p className="text-muted-foreground">
           Periodic maintenance operations to keep the cluster healthy and

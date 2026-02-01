@@ -170,13 +170,9 @@ function RolesPage() {
           </Badge>
         )
       }
-      breadcrumbs={[{ label: "Auth" }, { label: "Roles" }]}
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
-            Manage roles and their key permissions.
-          </p>
+        <div className="flex items-center justify-end">
           <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
             <Plus className="h-4 w-4" />
             Add role

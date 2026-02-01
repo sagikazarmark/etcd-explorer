@@ -36,10 +36,7 @@ function EndpointsPage() {
   };
 
   return (
-    <EtcdLayout
-      title="Endpoints"
-      breadcrumbs={[{ label: "Cluster" }, { label: "Endpoints" }]}
-    >
+    <EtcdLayout title="Endpoints">
       <div className="space-y-6">
         <p className="text-muted-foreground">
           Endpoint health and status for all cluster members.

@@ -73,10 +73,7 @@ function AlarmsPage() {
   };
 
   return (
-    <EtcdLayout
-      title="Alarms"
-      breadcrumbs={[{ label: "Cluster" }, { label: "Alarms" }]}
-    >
+    <EtcdLayout title="Alarms">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
