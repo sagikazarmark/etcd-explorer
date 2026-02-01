@@ -1,18 +1,20 @@
+import { isValidElement, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { PageTitle } from "./PageTitle";
+import { PageTitle, type PageTitleProps } from "./PageTitle";
 
 interface PageHeaderProps {
-  title?: string;
-  titleSuffix?: React.ReactNode;
+  title?: ReactNode;
   breadcrumbs?: Array<{ label: string; href?: string }>;
 }
 
-export function PageHeader({
-  title,
-  titleSuffix,
-  breadcrumbs,
-}: PageHeaderProps) {
+function isPageTitle(
+  node: ReactNode,
+): node is React.ReactElement<PageTitleProps> {
+  return isValidElement(node) && node.type === PageTitle;
+}
+
+export function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
   return (
     <header className="shrink-0 border-b border-border bg-card px-6 py-4">
       {/* Breadcrumbs */}
@@ -36,7 +38,8 @@ export function PageHeader({
       )}
 
       {/* Title */}
-      {title && <PageTitle title={title}>{titleSuffix}</PageTitle>}
+      {title &&
+        (isPageTitle(title) ? title : <PageTitle title={String(title)} />)}
     </header>
   );
 }

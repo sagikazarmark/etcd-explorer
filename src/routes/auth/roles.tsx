@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { Container, Row } from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,13 +42,14 @@ function RolesPage() {
 
   return (
     <PageLayout
-      title="Roles"
-      titleSuffix={
-        !authStatus.enabled && (
-          <Badge variant="secondary" className="text-xs">
-            Auth disabled
-          </Badge>
-        )
+      title={
+        <PageTitle title="Roles">
+          {!authStatus.enabled && (
+            <Badge variant="secondary" className="text-xs">
+              Auth disabled
+            </Badge>
+          )}
+        </PageTitle>
       }
     >
       <div className="space-y-4">

@@ -4,6 +4,7 @@ import { User, Users } from "lucide-react";
 
 import { Container, Row } from "@/components/Container";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { PageTitle } from "@/components/layout/PageTitle";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,13 +32,14 @@ function UsersPage() {
 
   return (
     <PageLayout
-      title="Users"
-      titleSuffix={
-        !authStatus.enabled && (
-          <Badge variant="secondary" className="text-xs">
-            Auth disabled
-          </Badge>
-        )
+      title={
+        <PageTitle title="Users">
+          {!authStatus.enabled && (
+            <Badge variant="secondary" className="text-xs">
+              Auth disabled
+            </Badge>
+          )}
+        </PageTitle>
       }
     >
       <div className="space-y-4">

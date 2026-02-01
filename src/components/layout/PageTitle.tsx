@@ -1,4 +1,4 @@
-interface PageTitleProps {
+export interface PageTitleProps {
   title: string;
   children?: React.ReactNode;
 }
