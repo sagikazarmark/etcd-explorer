@@ -4,7 +4,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +71,7 @@ function LeasesPage() {
   };
 
   return (
-    <EtcdLayout title="Leases">
+    <PageLayout title="Leases">
       <div className="space-y-4">
         <div className="flex justify-end">
           <Button className="gap-2">
@@ -169,6 +169,6 @@ function LeasesPage() {
           </Container>
         )}
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }

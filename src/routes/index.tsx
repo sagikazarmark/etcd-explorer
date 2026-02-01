@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,7 +28,7 @@ function DashboardPage() {
   const healthyMembers = members.length;
 
   return (
-    <EtcdLayout title="Dashboard">
+    <PageLayout title="Dashboard">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column - Key prefixes and Learn more */}
         <div className="lg:col-span-2 space-y-6">
@@ -196,7 +196,7 @@ function DashboardPage() {
           </Card>
         </div>
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }
 

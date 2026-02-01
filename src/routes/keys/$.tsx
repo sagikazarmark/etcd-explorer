@@ -5,7 +5,7 @@ import {
   useParams,
 } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -128,7 +128,7 @@ export function KeyBrowserPage() {
   };
 
   return (
-    <EtcdLayout title="Key Browser" breadcrumbs={breadcrumbs}>
+    <PageLayout title="Key Browser" breadcrumbs={breadcrumbs}>
       <div className="space-y-4">
         {/* Toolbar */}
         <div className="flex items-center justify-between gap-4">
@@ -228,7 +228,7 @@ export function KeyBrowserPage() {
           </div>
         )}
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }
 
@@ -273,7 +273,7 @@ function KeyDetailView({
 
   if (!keyMeta) {
     return (
-      <EtcdLayout title="Key Not Found" breadcrumbs={breadcrumbs}>
+      <PageLayout title="Key Not Found" breadcrumbs={breadcrumbs}>
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">This key does not exist.</p>
           <Button variant="outline" onClick={handleBack}>
@@ -281,12 +281,12 @@ function KeyDetailView({
             Go Back
           </Button>
         </div>
-      </EtcdLayout>
+      </PageLayout>
     );
   }
 
   return (
-    <EtcdLayout title={`/${currentPath}`} breadcrumbs={breadcrumbs}>
+    <PageLayout title={`/${currentPath}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Value card */}
@@ -347,7 +347,7 @@ function KeyDetailView({
           </div>
         </div>
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }
 

@@ -1,17 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
-interface EtcdHeaderProps {
+interface PageHeaderProps {
   title?: string;
   titleSuffix?: React.ReactNode;
   breadcrumbs?: Array<{ label: string; href?: string }>;
 }
 
-export function EtcdHeader({
+export function PageHeader({
   title,
   titleSuffix,
   breadcrumbs,
-}: EtcdHeaderProps) {
+}: PageHeaderProps) {
   return (
     <header className="shrink-0 border-b border-border bg-card px-6 py-4">
       {/* Breadcrumbs */}

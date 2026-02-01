@@ -5,7 +5,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -161,7 +161,7 @@ function RolesPage() {
   };
 
   return (
-    <EtcdLayout
+    <PageLayout
       title="Roles"
       titleSuffix={
         !authStatus.enabled && (
@@ -287,6 +287,6 @@ function RolesPage() {
         description={`Are you sure you want to delete role "${selectedRole?.name}"? This action cannot be undone.`}
         onConfirm={handleDeleteRole}
       />
-    </EtcdLayout>
+    </PageLayout>
   );
 }

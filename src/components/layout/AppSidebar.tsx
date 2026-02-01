@@ -1,20 +1,21 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import {
-  LayoutDashboard,
-  Key,
-  Users,
-  Shield,
-  Clock,
-  Server,
-  AlertTriangle,
-  PanelLeftClose,
-  PanelLeft,
   Activity,
-  Wrench,
-  Sun,
+  AlertTriangle,
+  Clock,
+  Key,
+  LayoutDashboard,
   Moon,
+  PanelLeft,
+  PanelLeftClose,
+  Server,
+  Shield,
+  Sun,
+  Users,
+  Wrench,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -23,12 +24,11 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  useSidebar,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 
 interface NavItem {
   title: string;
@@ -61,7 +61,7 @@ const maintenanceItems: NavItem[] = [
   { title: "Maintenance", url: "/maintenance", icon: Wrench },
 ];
 
-export function EtcdSidebar() {
+export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { toggleSidebar, state } = useSidebar();
@@ -119,6 +119,7 @@ export function EtcdSidebar() {
             </span>
           </h1>
           <button
+            type="button"
             onClick={toggleSidebar}
             className="flex h-7 w-7 items-center justify-center rounded-md text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
           >
@@ -173,7 +174,7 @@ export function EtcdSidebar() {
       <SidebarFooter className="border-t border-sidebar-border px-3 py-3">
         <div className="flex items-center justify-between group-data-[collapsible=icon]:justify-center">
           <p className="text-xs text-sidebar-foreground/50 group-data-[collapsible=icon]:hidden">
-            etcd v3.5.12
+            {/*etcd v3.5.12*/}
           </p>
           <Button
             variant="ghost"

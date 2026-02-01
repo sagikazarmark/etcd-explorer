@@ -11,7 +11,7 @@ import { AddUserDialog } from "@/components/AddUserDialog";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { Container, Row } from "@/components/Container";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { GrantRoleDialog } from "@/components/GrantRoleDialog";
 import { UserDetailsDialog } from "@/components/UserDetailsDialog";
 import { Badge } from "@/components/ui/badge";
@@ -132,7 +132,7 @@ function UsersPage() {
   };
 
   return (
-    <EtcdLayout
+    <PageLayout
       title="Users"
       titleSuffix={
         !authStatus.enabled && (
@@ -254,6 +254,6 @@ function UsersPage() {
         description={`Are you sure you want to delete user "${selectedUser?.name}"? This action cannot be undone.`}
         onConfirm={handleDeleteUser}
       />
-    </EtcdLayout>
+    </PageLayout>
   );
 }

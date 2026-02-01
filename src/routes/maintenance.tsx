@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import {
   Card,
   CardContent,
@@ -64,7 +64,7 @@ function MaintenancePage() {
     totalDbSize > 0 ? ((fragmentation / totalDbSize) * 100).toFixed(1) : "0";
 
   return (
-    <EtcdLayout title="Maintenance">
+    <PageLayout title="Maintenance">
       <div className="space-y-6">
         <p className="text-muted-foreground">
           Periodic maintenance operations to keep the cluster healthy and
@@ -213,6 +213,6 @@ function MaintenancePage() {
           </Card>
         </div>
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }

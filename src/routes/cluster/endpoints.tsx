@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Crown } from "lucide-react";
@@ -36,7 +36,7 @@ function EndpointsPage() {
   };
 
   return (
-    <EtcdLayout title="Endpoints">
+    <PageLayout title="Endpoints">
       <div className="space-y-6">
         <p className="text-muted-foreground">
           Endpoint health and status for all cluster members.
@@ -150,6 +150,6 @@ function EndpointsPage() {
           </CardContent>
         </Card>
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }

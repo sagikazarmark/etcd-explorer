@@ -4,7 +4,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { EtcdLayout } from "@/components/EtcdLayout";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,7 +73,7 @@ function AlarmsPage() {
   };
 
   return (
-    <EtcdLayout title="Alarms">
+    <PageLayout title="Alarms">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
@@ -145,6 +145,6 @@ function AlarmsPage() {
           </CardContent>
         </Card>
       </div>
-    </EtcdLayout>
+    </PageLayout>
   );
 }
