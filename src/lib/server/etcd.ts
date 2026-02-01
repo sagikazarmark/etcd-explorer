@@ -6,7 +6,6 @@ import type {
   EtcdAuthStatus,
   EtcdUser,
   EtcdRole,
-  EtcdRolePermission,
   EtcdLease,
   EtcdAlarm,
   EtcdMember,
@@ -92,44 +91,6 @@ export const getUsers = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const addUser = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({
-      name: z.string().min(1),
-      password: z.string().min(1),
-      roles: z.array(z.string()).default([]),
-    }),
-  )
-  .handler(async ({ data }): Promise<EtcdUser> => {
-    return getClient().addUser(data.name, data.password, data.roles);
-  });
-
-export const deleteUser = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ name: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().deleteUser(data.name);
-  });
-
-export const grantUserRole = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ userName: z.string(), role: z.string() }))
-  .handler(async ({ data }): Promise<EtcdUser | null> => {
-    return getClient().grantUserRole(data.userName, data.role);
-  });
-
-export const revokeUserRole = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ userName: z.string(), role: z.string() }))
-  .handler(async ({ data }): Promise<EtcdUser | null> => {
-    return getClient().revokeUserRole(data.userName, data.role);
-  });
-
-export const changePassword = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({ userName: z.string(), password: z.string().min(1) }),
-  )
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().changePassword(data.userName, data.password);
-  });
-
 // ============ Auth - Roles ============
 
 export const getRoles = createServerFn({ method: "GET" }).handler(
@@ -137,51 +98,6 @@ export const getRoles = createServerFn({ method: "GET" }).handler(
     return getClient().getRoles();
   },
 );
-
-export const addRole = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ name: z.string().min(1) }))
-  .handler(async ({ data }): Promise<EtcdRole> => {
-    return getClient().addRole(data.name);
-  });
-
-export const deleteRole = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ name: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().deleteRole(data.name);
-  });
-
-export const grantPermission = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({
-      roleName: z.string(),
-      permission: z.object({
-        permType: z.enum(["read", "write", "readwrite"]),
-        key: z.string(),
-        rangeEnd: z.string().optional(),
-        prefix: z.boolean().optional(),
-      }),
-    }),
-  )
-  .handler(async ({ data }): Promise<EtcdRole | null> => {
-    return getClient().grantPermission(
-      data.roleName,
-      data.permission as EtcdRolePermission,
-    );
-  });
-
-export const revokePermission = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({
-      roleName: z.string(),
-      permission: z.object({
-        permType: z.enum(["read", "write", "readwrite"]),
-        key: z.string(),
-      }),
-    }),
-  )
-  .handler(async ({ data }): Promise<EtcdRole | null> => {
-    return getClient().revokePermission(data.roleName, data.permission);
-  });
 
 // ============ Leases ============
 

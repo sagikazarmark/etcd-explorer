@@ -4,7 +4,6 @@ import type {
   EtcdAuthStatus,
   EtcdUser,
   EtcdRole,
-  EtcdRolePermission,
   EtcdLease,
   EtcdAlarm,
   EtcdMember,
@@ -29,27 +28,9 @@ export interface EtcdClientInterface {
   // ============ Auth - Users ============
   getAuthStatus(): Promise<EtcdAuthStatus>;
   getUsers(): Promise<EtcdUser[]>;
-  addUser(name: string, password: string, roles: string[]): Promise<EtcdUser>;
-  deleteUser(name: string): Promise<{ success: boolean }>;
-  grantUserRole(userName: string, role: string): Promise<EtcdUser | null>;
-  revokeUserRole(userName: string, role: string): Promise<EtcdUser | null>;
-  changePassword(
-    userName: string,
-    password: string,
-  ): Promise<{ success: boolean }>;
 
   // ============ Auth - Roles ============
   getRoles(): Promise<EtcdRole[]>;
-  addRole(name: string): Promise<EtcdRole>;
-  deleteRole(name: string): Promise<{ success: boolean }>;
-  grantPermission(
-    roleName: string,
-    permission: EtcdRolePermission,
-  ): Promise<EtcdRole | null>;
-  revokePermission(
-    roleName: string,
-    permission: { permType: string; key: string },
-  ): Promise<EtcdRole | null>;
 
   // ============ Leases ============
   getLeases(): Promise<EtcdLease[]>;

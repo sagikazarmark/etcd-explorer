@@ -5,7 +5,6 @@ import type {
   EtcdAuthStatus,
   EtcdUser,
   EtcdRole,
-  EtcdRolePermission,
   EtcdLease,
   EtcdAlarm,
   EtcdMember,
@@ -86,110 +85,10 @@ export class MockEtcdClient implements EtcdClientInterface {
     return this.users;
   }
 
-  async addUser(
-    name: string,
-    _password: string,
-    roles: string[],
-  ): Promise<EtcdUser> {
-    const newUser: EtcdUser = { name, roles };
-    this.users = [...this.users, newUser];
-    return newUser;
-  }
-
-  async deleteUser(name: string): Promise<{ success: boolean }> {
-    this.users = this.users.filter((u) => u.name !== name);
-    return { success: true };
-  }
-
-  async grantUserRole(
-    userName: string,
-    role: string,
-  ): Promise<EtcdUser | null> {
-    const userIndex = this.users.findIndex((u) => u.name === userName);
-    if (userIndex === -1) return null;
-
-    this.users = this.users.map((u, i) =>
-      i === userIndex ? { ...u, roles: [...u.roles, role] } : u,
-    );
-    return this.users[userIndex];
-  }
-
-  async revokeUserRole(
-    userName: string,
-    role: string,
-  ): Promise<EtcdUser | null> {
-    const userIndex = this.users.findIndex((u) => u.name === userName);
-    if (userIndex === -1) return null;
-
-    this.users = this.users.map((u, i) =>
-      i === userIndex ? { ...u, roles: u.roles.filter((r) => r !== role) } : u,
-    );
-    return this.users[userIndex];
-  }
-
-  async changePassword(
-    _userName: string,
-    _password: string,
-  ): Promise<{ success: boolean }> {
-    return { success: true };
-  }
-
   // ============ Auth - Roles ============
 
   async getRoles(): Promise<EtcdRole[]> {
     return this.roles;
-  }
-
-  async addRole(name: string): Promise<EtcdRole> {
-    const newRole: EtcdRole = { name, permissions: [] };
-    this.roles = [...this.roles, newRole];
-    return newRole;
-  }
-
-  async deleteRole(name: string): Promise<{ success: boolean }> {
-    this.roles = this.roles.filter((r) => r.name !== name);
-    return { success: true };
-  }
-
-  async grantPermission(
-    roleName: string,
-    permission: EtcdRolePermission,
-  ): Promise<EtcdRole | null> {
-    const roleIndex = this.roles.findIndex((r) => r.name === roleName);
-    if (roleIndex === -1) return null;
-
-    this.roles = this.roles.map((r, i) =>
-      i === roleIndex
-        ? {
-            ...r,
-            permissions: [...r.permissions, permission],
-          }
-        : r,
-    );
-    return this.roles[roleIndex];
-  }
-
-  async revokePermission(
-    roleName: string,
-    permission: { permType: string; key: string },
-  ): Promise<EtcdRole | null> {
-    const roleIndex = this.roles.findIndex((r) => r.name === roleName);
-    if (roleIndex === -1) return null;
-
-    this.roles = this.roles.map((r, i) =>
-      i === roleIndex
-        ? {
-            ...r,
-            permissions: r.permissions.filter(
-              (p) =>
-                !(
-                  p.key === permission.key && p.permType === permission.permType
-                ),
-            ),
-          }
-        : r,
-    );
-    return this.roles[roleIndex];
   }
 
   // ============ Leases ============

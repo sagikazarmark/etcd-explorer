@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
 import { Button } from "@/components/ui/button";
@@ -16,27 +12,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Plus, Shield, MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { AddRoleDialog } from "@/components/AddRoleDialog";
+import { Shield } from "lucide-react";
 import { RolePermissionsDialog } from "@/components/RolePermissionsDialog";
-import { GrantPermissionDialog } from "@/components/GrantPermissionDialog";
-import { RevokePermissionDialog } from "@/components/RevokePermissionDialog";
-import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
-import { toast } from "sonner";
 import { rolesQueryOptions, authStatusQueryOptions } from "@/lib/queries/etcd";
-import {
-  addRole,
-  deleteRole,
-  grantPermission,
-  revokePermission,
-} from "@/lib/server/etcd";
-import type { EtcdRole, EtcdRolePermission } from "@/lib/types/etcd";
+import type { EtcdRole } from "@/lib/types/etcd";
 
 export const Route = createFileRoute("/auth/roles")({
   loader: async ({ context: { queryClient } }) => {
@@ -49,115 +28,15 @@ export const Route = createFileRoute("/auth/roles")({
 });
 
 function RolesPage() {
-  const queryClient = useQueryClient();
   const { data: roles } = useSuspenseQuery(rolesQueryOptions());
   const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions());
 
-  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<EtcdRole | null>(null);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
-  const [grantPermDialogOpen, setGrantPermDialogOpen] = useState(false);
-  const [revokePermDialogOpen, setRevokePermDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const addRoleMutation = useMutation({
-    mutationFn: (data: { name: string }) => addRole({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-
-  const grantPermissionMutation = useMutation({
-    mutationFn: (data: { roleName: string; permission: EtcdRolePermission }) =>
-      grantPermission({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-
-  const revokePermissionMutation = useMutation({
-    mutationFn: (data: { roleName: string; permission: EtcdRolePermission }) =>
-      revokePermission({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-
-  const deleteRoleMutation = useMutation({
-    mutationFn: (name: string) => deleteRole({ data: { name } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-
-  const handleRoleAdded = (newRole: { name: string }) => {
-    addRoleMutation.mutate(newRole);
-  };
-
-  const handlePermissionGranted = (
-    roleName: string,
-    permission: EtcdRolePermission,
-  ) => {
-    grantPermissionMutation.mutate({ roleName, permission });
-    // Update selected role for the dialog
-    setSelectedRole((prev) =>
-      prev && prev.name === roleName
-        ? { ...prev, permissions: [...prev.permissions, permission] }
-        : prev,
-    );
-  };
-
-  const handlePermissionRevoked = (
-    roleName: string,
-    permission: EtcdRolePermission,
-  ) => {
-    revokePermissionMutation.mutate({ roleName, permission });
-    // Update selected role for the dialog
-    setSelectedRole((prev) =>
-      prev && prev.name === roleName
-        ? {
-            ...prev,
-            permissions: prev.permissions.filter(
-              (p) =>
-                p.key !== permission.key || p.permType !== permission.permType,
-            ),
-          }
-        : prev,
-    );
-  };
-
-  const handleDeleteRole = () => {
-    if (!selectedRole) return;
-    deleteRoleMutation.mutate(selectedRole.name, {
-      onSuccess: () => {
-        toast.success("Role deleted", {
-          description: `Role "${selectedRole.name}" has been deleted.`,
-        });
-        setDeleteDialogOpen(false);
-        setSelectedRole(null);
-      },
-    });
-  };
-
-  const openDialog = (
-    role: EtcdRole,
-    dialog: "permissions" | "grantPerm" | "revokePerm" | "delete",
-  ) => {
+  const openPermissionsDialog = (role: EtcdRole) => {
     setSelectedRole(role);
-    switch (dialog) {
-      case "permissions":
-        setPermissionsDialogOpen(true);
-        break;
-      case "grantPerm":
-        setGrantPermDialogOpen(true);
-        break;
-      case "revokePerm":
-        setRevokePermDialogOpen(true);
-        break;
-      case "delete":
-        setDeleteDialogOpen(true);
-        break;
-    }
+    setPermissionsDialogOpen(true);
   };
 
   return (
@@ -172,13 +51,6 @@ function RolesPage() {
       }
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-end">
-          <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Add role
-          </Button>
-        </div>
-
         {roles.length === 0 ? (
           <Empty className="bg-card border border-border rounded-md">
             <EmptyHeader>
@@ -187,7 +59,7 @@ function RolesPage() {
               </EmptyMedia>
               <EmptyTitle>No roles</EmptyTitle>
               <EmptyDescription>
-                Add a role to manage key permissions and access control.
+                No roles have been created yet.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -220,72 +92,23 @@ function RolesPage() {
                     </p>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() => openDialog(role, "permissions")}
-                    >
-                      View permissions
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => openDialog(role, "grantPerm")}
-                    >
-                      Grant permission
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => openDialog(role, "revokePerm")}
-                    >
-                      Revoke permission
-                    </DropdownMenuItem>
-                    {role.name !== "root" && (
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => openDialog(role, "delete")}
-                      >
-                        Delete role
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openPermissionsDialog(role)}
+                >
+                  View permissions
+                </Button>
               </Row>
             ))}
           </Container>
         )}
       </div>
 
-      <AddRoleDialog
-        open={addDialogOpen}
-        onOpenChange={setAddDialogOpen}
-        onRoleAdded={handleRoleAdded}
-      />
       <RolePermissionsDialog
         open={permissionsDialogOpen}
         onOpenChange={setPermissionsDialogOpen}
         role={selectedRole}
-      />
-      <GrantPermissionDialog
-        open={grantPermDialogOpen}
-        onOpenChange={setGrantPermDialogOpen}
-        role={selectedRole}
-        onPermissionGranted={handlePermissionGranted}
-      />
-      <RevokePermissionDialog
-        open={revokePermDialogOpen}
-        onOpenChange={setRevokePermDialogOpen}
-        role={selectedRole}
-        onPermissionRevoked={handlePermissionRevoked}
-      />
-      <DeleteConfirmDialog
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        title="Delete Role"
-        description={`Are you sure you want to delete role "${selectedRole?.name}"? This action cannot be undone.`}
-        onConfirm={handleDeleteRole}
       />
     </PageLayout>
   );
