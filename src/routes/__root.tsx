@@ -1,18 +1,14 @@
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
-  HeadContent,
-  Outlet,
-  Scripts,
   createRootRouteWithContext,
+  HeadContent,
+  Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
-
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import { Toaster } from "@/components/ui/sonner";
-
 import appCss from "../styles.css?url";
-
-import type { QueryClient } from "@tanstack/react-query";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -37,16 +33,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "/favicon.svg",
+      },
+      {
+        rel: "shortcut icon",
+        href: "/favicon.ico",
+      },
     ],
   }),
 
-  component: RootComponent,
   shellComponent: RootDocument,
 });
-
-function RootComponent() {
-  return <Outlet />;
-}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -59,14 +59,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Toaster position="bottom-right" />
         <TanStackDevtools
           config={{
-            position: "bottom-right",
+            position: "bottom-left",
           }}
           plugins={[
             {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
             },
-            TanStackQueryDevtools,
+            {
+              name: "Tanstack Query",
+              render: <ReactQueryDevtoolsPanel />,
+            },
           ]}
         />
         <Scripts />
