@@ -211,34 +211,6 @@ export const getMembers = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const updateMember = createServerFn({ method: "POST" })
-  .inputValidator(
-    z.object({ memberId: z.string(), peerURLs: z.array(z.string()) }),
-  )
-  .handler(async ({ data }): Promise<EtcdMember | null> => {
-    return getClient().updateMember(data.memberId, data.peerURLs);
-  });
-
-export const promoteMember = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ memberId: z.string() }))
-  .handler(async ({ data }): Promise<EtcdMember | null> => {
-    return getClient().promoteMember(data.memberId);
-  });
-
-export const removeMember = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ memberId: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().removeMember(data.memberId);
-  });
-
-export const moveLeader = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ targetMemberId: z.string() }))
-  .handler(
-    async ({ data }): Promise<{ success: boolean; newLeaderId: string }> => {
-      return getClient().moveLeader(data.targetMemberId);
-    },
-  );
-
 // ============ Alarms ============
 
 export const getAlarms = createServerFn({ method: "GET" }).handler(
