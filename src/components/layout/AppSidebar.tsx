@@ -40,15 +40,12 @@ interface NavItem {
 const mainItems: NavItem[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard, end: true },
   { title: "Key Browser", url: "/keys", icon: Key },
+  { title: "Leases", url: "/leases", icon: Clock },
 ];
 
 const authItems: NavItem[] = [
   { title: "Users", url: "/auth/users", icon: Users },
   { title: "Roles", url: "/auth/roles", icon: Shield },
-];
-
-const leaseItems: NavItem[] = [
-  { title: "Leases", url: "/leases", icon: Clock },
 ];
 
 const clusterItems: NavItem[] = [
@@ -145,13 +142,6 @@ export function AppSidebar() {
           <SidebarGroupLabel>Auth</SidebarGroupLabel>
           <SidebarGroupContent>
             {renderMenuItems(authItems)}
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Leases */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            {renderMenuItems(leaseItems)}
           </SidebarGroupContent>
         </SidebarGroup>
 
