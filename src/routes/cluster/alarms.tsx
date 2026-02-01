@@ -50,10 +50,6 @@ function AlarmsPage() {
   return (
     <PageLayout title="Alarms">
       <div className="space-y-4">
-        <p className="text-muted-foreground">
-          Cluster alarms indicate conditions requiring operator intervention.
-        </p>
-
         <Card className="etcd-card">
           <CardContent className="p-0">
             {alarms.length === 0 ? (
