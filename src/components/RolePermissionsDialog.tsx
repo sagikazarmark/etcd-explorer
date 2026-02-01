@@ -42,6 +42,7 @@ export function RolePermissionsDialog({
             <div className="space-y-2">
               {role.permissions.map((perm, idx) => (
                 <div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: because
                   key={idx}
                   className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                 >
