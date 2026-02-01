@@ -602,45 +602,6 @@ export class RealEtcdClient implements EtcdClientInterface {
     }, []);
   }
 
-  async disarmAlarm(
-    memberID: string,
-    alarm: string,
-  ): Promise<{ success: boolean }> {
-    return withErrorHandling(async () => {
-      const memberId = BigInt(`0x${memberID}`).toString();
-
-      let alarmType: "None" | "Nospace" | "Corrupt" = "None";
-      if (alarm === "NOSPACE") alarmType = "Nospace";
-      else if (alarm === "CORRUPT") alarmType = "Corrupt";
-
-      await this.client.maintenance.alarm({
-        action: "Deactivate",
-        memberID: memberId,
-        alarm: alarmType,
-      });
-
-      return { success: true };
-    });
-  }
-
-  async disarmAllAlarms(): Promise<{ success: boolean }> {
-    return withErrorHandling(async () => {
-      // First get all alarms
-      const response = await this.client.maintenance.alarm({ action: "Get" });
-
-      // Deactivate each alarm
-      for (const alarm of response.alarms || []) {
-        await this.client.maintenance.alarm({
-          action: "Deactivate",
-          memberID: alarm.memberID,
-          alarm: alarm.alarm,
-        });
-      }
-
-      return { success: true };
-    });
-  }
-
   // ============ Endpoints ============
 
   async getEndpointHealth(): Promise<EtcdEndpointHealth[]> {

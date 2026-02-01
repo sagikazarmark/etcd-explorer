@@ -1,17 +1,10 @@
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
-import { toast } from "sonner";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { alarmsQueryOptions, membersQueryOptions } from "@/lib/queries/etcd";
-import { disarmAlarm, disarmAllAlarms } from "@/lib/server/etcd";
 
 export const Route = createFileRoute("/cluster/alarms")({
   loader: async ({ context: { queryClient } }) => {
@@ -24,26 +17,8 @@ export const Route = createFileRoute("/cluster/alarms")({
 });
 
 function AlarmsPage() {
-  const queryClient = useQueryClient();
   const { data: alarms } = useSuspenseQuery(alarmsQueryOptions());
   const { data: members } = useSuspenseQuery(membersQueryOptions());
-
-  const disarmMutation = useMutation({
-    mutationFn: (data: { memberID: string; alarm: string }) =>
-      disarmAlarm({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["alarms"] });
-      toast.success("Alarm disarmed");
-    },
-  });
-
-  const disarmAllMutation = useMutation({
-    mutationFn: () => disarmAllAlarms(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["alarms"] });
-      toast.success("All alarms disarmed");
-    },
-  });
 
   const getMemberName = (memberId: string) => {
     const member = members.find((m) => m.id === memberId);
@@ -75,19 +50,9 @@ function AlarmsPage() {
   return (
     <PageLayout title="Alarms">
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">
-            Cluster alarms indicate conditions requiring operator intervention.
-          </p>
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => disarmAllMutation.mutate()}
-            disabled={disarmAllMutation.isPending || alarms.length === 0}
-          >
-            Disarm all
-          </Button>
-        </div>
+        <p className="text-muted-foreground">
+          Cluster alarms indicate conditions requiring operator intervention.
+        </p>
 
         <Card className="etcd-card">
           <CardContent className="p-0">
@@ -106,7 +71,7 @@ function AlarmsPage() {
                 {alarms.map((alarm, idx) => (
                   <div
                     key={`${alarm.memberID}-${idx}`}
-                    className="flex items-center justify-between px-4 py-4"
+                    className="flex items-center px-4 py-4"
                   >
                     <div className="flex items-center gap-3">
                       {getAlarmIcon(alarm.alarm)}
@@ -125,19 +90,6 @@ function AlarmsPage() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        disarmMutation.mutate({
-                          memberID: alarm.memberID,
-                          alarm: alarm.alarm,
-                        })
-                      }
-                      disabled={disarmMutation.isPending}
-                    >
-                      Disarm
-                    </Button>
                   </div>
                 ))}
               </div>

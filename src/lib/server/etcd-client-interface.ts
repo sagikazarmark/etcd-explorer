@@ -68,8 +68,6 @@ export interface EtcdClientInterface {
 
   // ============ Alarms ============
   getAlarms(): Promise<EtcdAlarm[]>;
-  disarmAlarm(memberID: string, alarm: string): Promise<{ success: boolean }>;
-  disarmAllAlarms(): Promise<{ success: boolean }>;
 
   // ============ Endpoints ============
   getEndpointHealth(): Promise<EtcdEndpointHealth[]>;

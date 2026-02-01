@@ -245,21 +245,6 @@ export class MockEtcdClient implements EtcdClientInterface {
     return this.alarms;
   }
 
-  async disarmAlarm(
-    memberID: string,
-    alarm: string,
-  ): Promise<{ success: boolean }> {
-    this.alarms = this.alarms.filter(
-      (a) => !(a.memberID === memberID && a.alarm === alarm),
-    );
-    return { success: true };
-  }
-
-  async disarmAllAlarms(): Promise<{ success: boolean }> {
-    this.alarms = [];
-    return { success: true };
-  }
-
   // ============ Endpoints ============
 
   async getEndpointHealth(): Promise<EtcdEndpointHealth[]> {

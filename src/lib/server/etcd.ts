@@ -207,18 +207,6 @@ export const getAlarms = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const disarmAlarm = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ memberID: z.string(), alarm: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().disarmAlarm(data.memberID, data.alarm);
-  });
-
-export const disarmAllAlarms = createServerFn({ method: "POST" }).handler(
-  async (): Promise<{ success: boolean }> => {
-    return getClient().disarmAllAlarms();
-  },
-);
-
 // ============ Endpoints ============
 
 export const getEndpointHealth = createServerFn({ method: "GET" }).handler(
