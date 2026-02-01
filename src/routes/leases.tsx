@@ -1,12 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  useSuspenseQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Empty,
@@ -15,10 +10,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Plus, Clock, RefreshCw, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { Clock } from "lucide-react";
 import { leasesQueryOptions } from "@/lib/queries/etcd";
-import { revokeLease, keepAliveLease } from "@/lib/server/etcd";
 
 export const Route = createFileRoute("/leases")({
   loader: ({ context: { queryClient } }) =>
@@ -27,24 +20,7 @@ export const Route = createFileRoute("/leases")({
 });
 
 function LeasesPage() {
-  const queryClient = useQueryClient();
   const { data: leases } = useSuspenseQuery(leasesQueryOptions());
-
-  const revokeMutation = useMutation({
-    mutationFn: (id: string) => revokeLease({ data: { id } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leases"] });
-      toast.success("Lease revoked");
-    },
-  });
-
-  const keepAliveMutation = useMutation({
-    mutationFn: (id: string) => keepAliveLease({ data: { id } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leases"] });
-      toast.success("Lease refreshed");
-    },
-  });
 
   const formatTtl = (seconds: number) => {
     if (seconds >= 3600) {
@@ -73,13 +49,6 @@ function LeasesPage() {
   return (
     <PageLayout title="Leases">
       <div className="space-y-4">
-        <div className="flex justify-end">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Grant lease
-          </Button>
-        </div>
-
         {leases.length === 0 ? (
           <Empty className="bg-card border border-border rounded-md">
             <EmptyHeader>
@@ -88,7 +57,7 @@ function LeasesPage() {
               </EmptyMedia>
               <EmptyTitle>No active leases</EmptyTitle>
               <EmptyDescription>
-                Grant a lease to attach time-to-live behavior to keys.
+                Leases provide time-to-live behavior for keys.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -140,28 +109,6 @@ function LeasesPage() {
                         No keys attached
                       </p>
                     )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5"
-                      onClick={() => keepAliveMutation.mutate(lease.id)}
-                      disabled={keepAliveMutation.isPending}
-                    >
-                      <RefreshCw className="h-3.5 w-3.5" />
-                      Keep-alive
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive"
-                      onClick={() => revokeMutation.mutate(lease.id)}
-                      disabled={revokeMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </div>
                 </Row>
               );

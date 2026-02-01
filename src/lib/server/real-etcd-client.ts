@@ -491,41 +491,6 @@ export class RealEtcdClient implements EtcdClientInterface {
     }, []);
   }
 
-  async revokeLease(id: string): Promise<{ success: boolean }> {
-    return withErrorHandling(async () => {
-      const leaseId = BigInt(`0x${id}`).toString();
-      await this.client.leaseClient.leaseRevoke({ ID: leaseId });
-      return { success: true };
-    });
-  }
-
-  async keepAliveLease(id: string): Promise<EtcdLease | null> {
-    return withErrorHandling(async () => {
-      const leaseId = BigInt(`0x${id}`).toString();
-
-      // Send a keep-alive using the stream API
-      const stream = await this.client.leaseClient.leaseKeepAlive();
-      stream.write({ ID: leaseId });
-
-      // Wait briefly for response then close
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      stream.end();
-
-      // Fetch updated lease info
-      const ttlInfo = await this.client.leaseClient.leaseTimeToLive({
-        ID: leaseId,
-        keys: true,
-      });
-
-      return {
-        id,
-        ttl: Number(ttlInfo.TTL),
-        grantedTtl: Number(ttlInfo.grantedTTL),
-        keys: (ttlInfo.keys || []).map((k) => k.toString()),
-      };
-    });
-  }
-
   // ============ Members ============
 
   async getMembers(): Promise<EtcdMember[]> {

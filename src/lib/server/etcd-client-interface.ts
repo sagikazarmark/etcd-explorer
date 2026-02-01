@@ -53,8 +53,6 @@ export interface EtcdClientInterface {
 
   // ============ Leases ============
   getLeases(): Promise<EtcdLease[]>;
-  revokeLease(id: string): Promise<{ success: boolean }>;
-  keepAliveLease(id: string): Promise<EtcdLease | null>;
 
   // ============ Members ============
   getMembers(): Promise<EtcdMember[]>;

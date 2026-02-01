@@ -198,21 +198,6 @@ export class MockEtcdClient implements EtcdClientInterface {
     return this.leases;
   }
 
-  async revokeLease(id: string): Promise<{ success: boolean }> {
-    this.leases = this.leases.filter((l) => l.id !== id);
-    return { success: true };
-  }
-
-  async keepAliveLease(id: string): Promise<EtcdLease | null> {
-    const leaseIndex = this.leases.findIndex((l) => l.id === id);
-    if (leaseIndex === -1) return null;
-
-    this.leases = this.leases.map((l, i) =>
-      i === leaseIndex ? { ...l, ttl: l.grantedTtl } : l,
-    );
-    return this.leases[leaseIndex];
-  }
-
   // ============ Members ============
 
   async getMembers(): Promise<EtcdMember[]> {

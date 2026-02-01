@@ -191,18 +191,6 @@ export const getLeases = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const revokeLease = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().revokeLease(data.id);
-  });
-
-export const keepAliveLease = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }): Promise<EtcdLease | null> => {
-    return getClient().keepAliveLease(data.id);
-  });
-
 // ============ Cluster Members ============
 
 export const getMembers = createServerFn({ method: "GET" }).handler(
