@@ -10,6 +10,8 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   Select,
   SelectContent,
@@ -20,7 +22,7 @@ import {
 import { keysQueryOptions, keyValueQueryOptions } from "@/lib/queries/etcd";
 import type { Key } from "@/lib/types/etcd";
 import { cn } from "@/lib/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
   Link,
@@ -43,12 +45,6 @@ const PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const;
 type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];
 
 export const Route = createFileRoute("/keys/$")({
-  loader: async ({ context: { queryClient }, params }) => {
-    const pathParam = params["_splat"] || "";
-    const currentPath = pathParam || "";
-    const lookupPath = currentPath ? currentPath.replace(/\/$/, "") + "/" : "/";
-    return queryClient.ensureQueryData(keysQueryOptions(lookupPath));
-  },
   component: KeyBrowserPage,
 });
 
@@ -65,17 +61,15 @@ export function KeyBrowserPage() {
   const pathParts = currentPath.split("/").filter(Boolean);
 
   const lookupPath = currentPath ? currentPath.replace(/\/$/, "") + "/" : "/";
-  const { data: keys } = useSuspenseQuery(keysQueryOptions(lookupPath));
+  const { data: keys, isLoading, error, refetch } = useQuery(keysQueryOptions(lookupPath));
 
   const endsWithSlash = currentPath.endsWith("/") || currentPath === "";
-  const isDirectory = endsWithSlash || keys.length > 0;
+  const isDirectory = endsWithSlash || (keys && keys.length > 0);
 
   const breadcrumbs = [
-    // Only make "Keys" a link if we're not on the root page
     { label: "Keys", href: pathParts.length > 0 ? "/keys" : undefined },
     ...pathParts.map((part, index) => ({
       label: part,
-      // Last item is never a link
       href:
         index === pathParts.length - 1
           ? undefined
@@ -84,6 +78,7 @@ export function KeyBrowserPage() {
   ];
 
   const filteredKeys = useMemo(() => {
+    if (!keys) return [];
     return keys.filter((k) =>
       k.key.toLowerCase().includes(searchQuery.toLowerCase()),
     );
@@ -105,6 +100,31 @@ export function KeyBrowserPage() {
     setCurrentPage(1);
   };
 
+  const header = <Breadcrumbs items={breadcrumbs} />;
+
+  if (isLoading) {
+    return (
+      <PageLayout header={header}>
+        <Loading message="Loading keys..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout header={header}>
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={() => refetch()}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!keys) {
+    return null;
+  }
+
   if (!isDirectory && pathParts.length > 0) {
     return (
       <KeyDetailView
@@ -118,12 +138,9 @@ export function KeyBrowserPage() {
   }
 
   const handleKeyClick = (key: Key) => {
-    // Ensure proper path separator between currentPath and key
     const basePath = currentPath ? currentPath.replace(/\/$/, "") + "/" : "";
     navigate({ to: `/keys/${basePath}${key.key}` });
   };
-
-  const header = <Breadcrumbs items={breadcrumbs} />;
 
   return (
     <PageLayout header={header}>
@@ -249,17 +266,31 @@ function KeyDetailView({
   const parentPath = pathParts.slice(0, -1).join("/");
   const lookupParentPath = parentPath ? parentPath + "/" : "/";
 
-  const { data: keysInParent } = useSuspenseQuery(
-    keysQueryOptions(lookupParentPath),
-  );
-  const { data: keyData } = useSuspenseQuery(
-    keyValueQueryOptions(currentPath.replace(/\/$/, "")),
-  );
+  const {
+    data: keysInParent,
+    isLoading: keysLoading,
+    error: keysError,
+    refetch: refetchKeys,
+  } = useQuery(keysQueryOptions(lookupParentPath));
+  const {
+    data: keyData,
+    isLoading: keyDataLoading,
+    error: keyDataError,
+    refetch: refetchKeyData,
+  } = useQuery(keyValueQueryOptions(currentPath.replace(/\/$/, "")));
 
-  const keyMeta = keysInParent.find((k) => k.key === keyName);
+  const isLoading = keysLoading || keyDataLoading;
+  const error = keysError || keyDataError;
+
+  const handleRetry = () => {
+    if (keysError) refetchKeys();
+    if (keyDataError) refetchKeyData();
+  };
+
+  const keyMeta = keysInParent?.find((k) => k.key === keyName);
 
   const handleCopyValue = async () => {
-    await navigator.clipboard.writeText(keyData.value || "");
+    await navigator.clipboard.writeText(keyData?.value || "");
     setCopied(true);
     toast.success("Value copied to clipboard");
     setTimeout(() => setCopied(false), 2000);
@@ -270,6 +301,29 @@ function KeyDetailView({
   };
 
   const header = <Breadcrumbs items={breadcrumbs} />;
+
+  if (isLoading) {
+    return (
+      <PageLayout header={header}>
+        <Loading message="Loading key..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout header={header}>
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!keysInParent || !keyData) {
+    return null;
+  }
 
   if (!keyMeta) {
     return (

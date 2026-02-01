@@ -1,27 +1,64 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Crown, Server } from "lucide-react";
 import { Container, Row } from "@/components/Container";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   clusterInfoQueryOptions,
   membersQueryOptions,
 } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/cluster/members")({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(membersQueryOptions()),
-      queryClient.ensureQueryData(clusterInfoQueryOptions()),
-    ]);
-  },
-  component: RouteComponent,
+  component: MembersPage,
 });
 
-function RouteComponent() {
-  const { data: members } = useSuspenseQuery(membersQueryOptions());
-  const { data: clusterInfo } = useSuspenseQuery(clusterInfoQueryOptions());
+function MembersPage() {
+  const {
+    data: members,
+    isLoading: membersLoading,
+    error: membersError,
+    refetch: refetchMembers,
+  } = useQuery(membersQueryOptions());
+  const {
+    data: clusterInfo,
+    isLoading: clusterInfoLoading,
+    error: clusterInfoError,
+    refetch: refetchClusterInfo,
+  } = useQuery(clusterInfoQueryOptions());
+
+  const isLoading = membersLoading || clusterInfoLoading;
+  const error = membersError || clusterInfoError;
+
+  const handleRetry = () => {
+    if (membersError) refetchMembers();
+    if (clusterInfoError) refetchClusterInfo();
+  };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Members">
+        <Loading message="Loading members..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Members">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!members || !clusterInfo) {
+    return null;
+  }
 
   return (
     <PageLayout title="Members">

@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   Empty,
   EmptyDescription,
@@ -14,13 +16,11 @@ import { Clock } from "lucide-react";
 import { leasesQueryOptions } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/leases")({
-  loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(leasesQueryOptions()),
   component: LeasesPage,
 });
 
 function LeasesPage() {
-  const { data: leases } = useSuspenseQuery(leasesQueryOptions());
+  const { data: leases, isLoading, error, refetch } = useQuery(leasesQueryOptions());
 
   const formatTtl = (seconds: number) => {
     if (seconds >= 3600) {
@@ -45,6 +45,29 @@ function LeasesPage() {
     if (percentage > 20) return "bg-warning";
     return "bg-destructive";
   };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Leases">
+        <Loading message="Loading leases..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Leases">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={() => refetch()}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!leases) {
+    return null;
+  }
 
   return (
     <PageLayout title="Leases">

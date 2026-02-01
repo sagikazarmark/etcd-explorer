@@ -1,9 +1,11 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle, Crown, XCircle } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   clusterInfoQueryOptions,
   endpointHealthQueryOptions,
@@ -11,24 +13,60 @@ import {
 } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/cluster/endpoints")({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(endpointHealthQueryOptions()),
-      queryClient.ensureQueryData(endpointStatusQueryOptions()),
-      queryClient.ensureQueryData(clusterInfoQueryOptions()),
-    ]);
-  },
-  component: RouteComponent,
+  component: EndpointsPage,
 });
 
-function RouteComponent() {
-  const { data: endpointHealth } = useSuspenseQuery(
-    endpointHealthQueryOptions(),
-  );
-  const { data: endpointStatus } = useSuspenseQuery(
-    endpointStatusQueryOptions(),
-  );
-  const { data: clusterInfo } = useSuspenseQuery(clusterInfoQueryOptions());
+function EndpointsPage() {
+  const {
+    data: endpointHealth,
+    isLoading: healthLoading,
+    error: healthError,
+    refetch: refetchHealth,
+  } = useQuery(endpointHealthQueryOptions());
+  const {
+    data: endpointStatus,
+    isLoading: statusLoading,
+    error: statusError,
+    refetch: refetchStatus,
+  } = useQuery(endpointStatusQueryOptions());
+  const {
+    data: clusterInfo,
+    isLoading: clusterInfoLoading,
+    error: clusterInfoError,
+    refetch: refetchClusterInfo,
+  } = useQuery(clusterInfoQueryOptions());
+
+  const isLoading = healthLoading || statusLoading || clusterInfoLoading;
+  const error = healthError || statusError || clusterInfoError;
+
+  const handleRetry = () => {
+    if (healthError) refetchHealth();
+    if (statusError) refetchStatus();
+    if (clusterInfoError) refetchClusterInfo();
+  };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Endpoints">
+        <Loading message="Loading endpoints..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Endpoints">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!endpointHealth || !endpointStatus || !clusterInfo) {
+    return null;
+  }
 
   const formatBytes = (bytes: number) => {
     const mb = bytes / (1024 * 1024);

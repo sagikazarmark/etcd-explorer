@@ -1,9 +1,11 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   Empty,
   EmptyDescription,
@@ -14,18 +16,53 @@ import {
 import { alarmsQueryOptions, membersQueryOptions } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/cluster/alarms")({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(alarmsQueryOptions()),
-      queryClient.ensureQueryData(membersQueryOptions()),
-    ]);
-  },
   component: AlarmsPage,
 });
 
 function AlarmsPage() {
-  const { data: alarms } = useSuspenseQuery(alarmsQueryOptions());
-  const { data: members } = useSuspenseQuery(membersQueryOptions());
+  const {
+    data: alarms,
+    isLoading: alarmsLoading,
+    error: alarmsError,
+    refetch: refetchAlarms,
+  } = useQuery(alarmsQueryOptions());
+  const {
+    data: members,
+    isLoading: membersLoading,
+    error: membersError,
+    refetch: refetchMembers,
+  } = useQuery(membersQueryOptions());
+
+  const isLoading = alarmsLoading || membersLoading;
+  const error = alarmsError || membersError;
+
+  const handleRetry = () => {
+    if (alarmsError) refetchAlarms();
+    if (membersError) refetchMembers();
+  };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Alarms">
+        <Loading message="Loading alarms..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Alarms">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!alarms || !members) {
+    return null;
+  }
 
   const getMemberName = (memberId: string) => {
     const member = members.find((m) => m.id === memberId);

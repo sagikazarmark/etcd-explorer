@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   ExternalLink,
   CheckCircle,
@@ -15,13 +17,35 @@ import {
 import { dashboardQueryOptions } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/")({
-  loader: ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(dashboardQueryOptions()),
   component: DashboardPage,
 });
 
 function DashboardPage() {
-  const { data } = useSuspenseQuery(dashboardQueryOptions());
+  const { data, isLoading, error, refetch } = useQuery(dashboardQueryOptions());
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Dashboard">
+        <Loading message="Loading dashboard..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Dashboard">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={() => refetch()}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+
   const { clusterInfo, authStatus, users, roles, leases, alarms, members } =
     data;
 

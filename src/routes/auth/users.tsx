@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { User, Users } from "lucide-react";
 
@@ -7,6 +7,8 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { PageTitle } from "@/components/layout/PageTitle";
 
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   Empty,
   EmptyDescription,
@@ -17,18 +19,53 @@ import {
 import { authStatusQueryOptions, usersQueryOptions } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/auth/users")({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(usersQueryOptions()),
-      queryClient.ensureQueryData(authStatusQueryOptions()),
-    ]);
-  },
   component: UsersPage,
 });
 
 function UsersPage() {
-  const { data: users } = useSuspenseQuery(usersQueryOptions());
-  const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions());
+  const {
+    data: users,
+    isLoading: usersLoading,
+    error: usersError,
+    refetch: refetchUsers,
+  } = useQuery(usersQueryOptions());
+  const {
+    data: authStatus,
+    isLoading: authStatusLoading,
+    error: authStatusError,
+    refetch: refetchAuthStatus,
+  } = useQuery(authStatusQueryOptions());
+
+  const isLoading = usersLoading || authStatusLoading;
+  const error = usersError || authStatusError;
+
+  const handleRetry = () => {
+    if (usersError) refetchUsers();
+    if (authStatusError) refetchAuthStatus();
+  };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Users">
+        <Loading message="Loading users..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Users">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!users || !authStatus) {
+    return null;
+  }
 
   return (
     <PageLayout

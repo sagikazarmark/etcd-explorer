@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Shield } from "lucide-react";
 import { useState } from "react";
@@ -8,6 +8,8 @@ import { PageTitle } from "@/components/layout/PageTitle";
 import { RolePermissionsDialog } from "@/components/RolePermissionsDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Loading } from "@/components/ui/loading";
+import { ErrorDisplay, getErrorMessage } from "@/components/ui/error";
 import {
   Empty,
   EmptyDescription,
@@ -19,26 +21,61 @@ import { authStatusQueryOptions, rolesQueryOptions } from "@/lib/queries/etcd";
 import type { Role } from "@/lib/types/etcd";
 
 export const Route = createFileRoute("/auth/roles")({
-  loader: async ({ context: { queryClient } }) => {
-    await Promise.all([
-      queryClient.ensureQueryData(rolesQueryOptions()),
-      queryClient.ensureQueryData(authStatusQueryOptions()),
-    ]);
-  },
   component: RolesPage,
 });
 
 function RolesPage() {
-  const { data: roles } = useSuspenseQuery(rolesQueryOptions());
-  const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions());
+  const {
+    data: roles,
+    isLoading: rolesLoading,
+    error: rolesError,
+    refetch: refetchRoles,
+  } = useQuery(rolesQueryOptions());
+  const {
+    data: authStatus,
+    isLoading: authStatusLoading,
+    error: authStatusError,
+    refetch: refetchAuthStatus,
+  } = useQuery(authStatusQueryOptions());
 
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
+
+  const isLoading = rolesLoading || authStatusLoading;
+  const error = rolesError || authStatusError;
+
+  const handleRetry = () => {
+    if (rolesError) refetchRoles();
+    if (authStatusError) refetchAuthStatus();
+  };
 
   const openPermissionsDialog = (role: Role) => {
     setSelectedRole(role);
     setPermissionsDialogOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Roles">
+        <Loading message="Loading roles..." />
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout title="Roles">
+        <ErrorDisplay
+          message={getErrorMessage(error)}
+          onRetry={handleRetry}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (!roles || !authStatus) {
+    return null;
+  }
 
   return (
     <PageLayout
