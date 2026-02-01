@@ -102,7 +102,7 @@ function DashboardPage() {
                 etcd Documentation
               </a>
               <a
-                href="https://etcd.io/docs/v3.5/op-guide/"
+                href="https://etcd.io/docs/latest/op-guide/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 etcd-link text-sm"
@@ -111,7 +111,7 @@ function DashboardPage() {
                 Operations Guide
               </a>
               <a
-                href="https://etcd.io/docs/v3.5/tutorials/"
+                href="https://etcd.io/docs/latest/tutorials/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 etcd-link text-sm"
