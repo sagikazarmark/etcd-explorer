@@ -1,17 +1,17 @@
 import { queryOptions } from "@tanstack/react-query";
 import {
+  getAlarms,
+  getAuthStatus,
   getClusterInfo,
   getDashboardData,
-  getKeys,
-  getKeyValue,
-  getAuthStatus,
-  getUsers,
-  getRoles,
-  getLeases,
-  getMembers,
-  getAlarms,
   getEndpointHealth,
   getEndpointStatus,
+  getKeys,
+  getKeyValue,
+  getLeases,
+  getMembers,
+  getRoles,
+  getUsers,
 } from "../server/etcd";
 
 export const clusterInfoQueryOptions = () =>
