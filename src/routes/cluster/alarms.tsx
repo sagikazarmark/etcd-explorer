@@ -4,6 +4,13 @@ import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { alarmsQueryOptions, membersQueryOptions } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/cluster/alarms")({
@@ -53,15 +60,17 @@ function AlarmsPage() {
         <Card className="etcd-card">
           <CardContent className="p-0">
             {alarms.length === 0 ? (
-              <div className="px-4 py-8 text-center">
-                <div className="flex items-center justify-center gap-2 text-success mb-2">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="font-medium">No active alarms</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  The cluster is operating normally.
-                </p>
-              </div>
+              <Empty className="bg-card border border-border rounded-md">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <CheckCircle />
+                  </EmptyMedia>
+                  <EmptyTitle>No active alarms</EmptyTitle>
+                  <EmptyDescription>
+                    The cluster is operating normally.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
             ) : (
               <div className="divide-y divide-border">
                 {alarms.map((alarm, idx) => (
