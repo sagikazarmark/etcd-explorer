@@ -1,14 +1,14 @@
 import type {
-  EtcdKey,
-  EtcdClusterInfo,
-  EtcdAuthStatus,
-  EtcdUser,
-  EtcdRole,
-  EtcdLease,
-  EtcdAlarm,
-  EtcdMember,
-  EtcdEndpointHealth,
-  EtcdEndpointStatus,
+  Alarm,
+  AuthStatus,
+  ClusterInfo,
+  ClusterMember,
+  EndpointHealth,
+  EndpointStatus,
+  Key,
+  Lease,
+  Role,
+  User,
 } from "../types/etcd";
 
 /**
@@ -17,40 +17,40 @@ import type {
  */
 export interface EtcdClientInterface {
   // ============ Cluster ============
-  getClusterInfo(): Promise<EtcdClusterInfo>;
+  getClusterInfo(): Promise<ClusterInfo>;
 
   // ============ Keys ============
-  getKeys(path: string): Promise<EtcdKey[]>;
-  getKeyValue(key: string): Promise<{ value: string; key: EtcdKey | null }>;
+  getKeys(path: string): Promise<Key[]>;
+  getKeyValue(key: string): Promise<{ value: string; key: Key | null }>;
   putKey(key: string, value: string): Promise<{ success: boolean }>;
   deleteKey(key: string): Promise<{ success: boolean }>;
 
   // ============ Auth - Users ============
-  getAuthStatus(): Promise<EtcdAuthStatus>;
-  getUsers(): Promise<EtcdUser[]>;
+  getAuthStatus(): Promise<AuthStatus>;
+  getUsers(): Promise<User[]>;
 
   // ============ Auth - Roles ============
-  getRoles(): Promise<EtcdRole[]>;
+  getRoles(): Promise<Role[]>;
 
   // ============ Leases ============
-  getLeases(): Promise<EtcdLease[]>;
+  getLeases(): Promise<Lease[]>;
 
   // ============ Members ============
-  getMembers(): Promise<EtcdMember[]>;
+  getMembers(): Promise<ClusterMember[]>;
   updateMember(
     memberId: string,
     peerURLs: string[],
-  ): Promise<EtcdMember | null>;
-  promoteMember(memberId: string): Promise<EtcdMember | null>;
+  ): Promise<ClusterMember | null>;
+  promoteMember(memberId: string): Promise<ClusterMember | null>;
   removeMember(memberId: string): Promise<{ success: boolean }>;
   moveLeader(
     targetMemberId: string,
   ): Promise<{ success: boolean; newLeaderId: string }>;
 
   // ============ Alarms ============
-  getAlarms(): Promise<EtcdAlarm[]>;
+  getAlarms(): Promise<Alarm[]>;
 
   // ============ Endpoints ============
-  getEndpointHealth(): Promise<EtcdEndpointHealth[]>;
-  getEndpointStatus(): Promise<EtcdEndpointStatus[]>;
+  getEndpointHealth(): Promise<EndpointHealth[]>;
+  getEndpointStatus(): Promise<EndpointStatus[]>;
 }

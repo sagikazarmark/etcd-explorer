@@ -1,18 +1,18 @@
 import type { Etcd3 } from "etcd3";
-import type { EtcdClientInterface } from "./etcd-client-interface";
 import type {
-  EtcdKey,
-  EtcdClusterInfo,
-  EtcdAuthStatus,
-  EtcdUser,
-  EtcdRole,
-  EtcdRolePermission,
-  EtcdLease,
-  EtcdAlarm,
-  EtcdMember,
-  EtcdEndpointHealth,
-  EtcdEndpointStatus,
+  Alarm,
+  AuthStatus,
+  ClusterInfo,
+  ClusterMember,
+  EndpointHealth,
+  EndpointStatus,
+  Key,
+  Lease,
+  Role,
+  RolePermission,
+  User,
 } from "../types/etcd";
+import type { EtcdClientInterface } from "./etcd-client-interface";
 import { withErrorHandling } from "./etcd-errors";
 
 /**
@@ -48,7 +48,7 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Cluster ============
 
-  async getClusterInfo(): Promise<EtcdClusterInfo> {
+  async getClusterInfo(): Promise<ClusterInfo> {
     return withErrorHandling(async () => {
       const status = await this.client.maintenance.status();
 
@@ -65,7 +65,7 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Keys ============
 
-  async getKeys(path: string): Promise<EtcdKey[]> {
+  async getKeys(path: string): Promise<Key[]> {
     return withErrorHandling(async () => {
       const prefix =
         path === "/" || path === "" ? "" : path.replace(/\/$/, "") + "/";
@@ -74,7 +74,7 @@ export class RealEtcdClient implements EtcdClientInterface {
       const response = await this.client.getAll().prefix(prefix).keys();
 
       // Build a map of direct children
-      const childrenMap = new Map<string, EtcdKey>();
+      const childrenMap = new Map<string, Key>();
 
       for (const fullKey of response) {
         // Remove the prefix to get the relative path
@@ -99,7 +99,7 @@ export class RealEtcdClient implements EtcdClientInterface {
       }
 
       // Get metadata for non-directory keys
-      const keys: EtcdKey[] = [];
+      const keys: Key[] = [];
       for (const child of childrenMap.values()) {
         if (!child.isDirectory) {
           const fullKeyPath = prefix + child.key;
@@ -135,9 +135,7 @@ export class RealEtcdClient implements EtcdClientInterface {
     }, []);
   }
 
-  async getKeyValue(
-    key: string,
-  ): Promise<{ value: string; key: EtcdKey | null }> {
+  async getKeyValue(key: string): Promise<{ value: string; key: Key | null }> {
     return withErrorHandling(
       async () => {
         const keyPath = key.replace(/\/$/, "");
@@ -187,7 +185,7 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Auth - Users ============
 
-  async getAuthStatus(): Promise<EtcdAuthStatus> {
+  async getAuthStatus(): Promise<AuthStatus> {
     try {
       // Try to get auth status
       const status = await this.client.auth.authStatus();
@@ -205,13 +203,13 @@ export class RealEtcdClient implements EtcdClientInterface {
     }
   }
 
-  async getUsers(): Promise<EtcdUser[]> {
+  async getUsers(): Promise<User[]> {
     return withErrorHandling(async () => {
       // Use high-level API
       const userList = await this.client.getUsers();
 
       // Get roles for each user
-      const usersWithRoles: EtcdUser[] = await Promise.all(
+      const usersWithRoles: User[] = await Promise.all(
         userList.map(async (user) => {
           try {
             const userRoles = await user.roles();
@@ -231,17 +229,17 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Auth - Roles ============
 
-  async getRoles(): Promise<EtcdRole[]> {
+  async getRoles(): Promise<Role[]> {
     return withErrorHandling(async () => {
       // Use high-level API
       const roleList = await this.client.getRoles();
 
       // Get permissions for each role
-      const rolesWithPermissions: EtcdRole[] = await Promise.all(
+      const rolesWithPermissions: Role[] = await Promise.all(
         roleList.map(async (role) => {
           try {
             const perms = await role.permissions();
-            const permissions: EtcdRolePermission[] = perms.map((p) => {
+            const permissions: RolePermission[] = perms.map((p) => {
               let permType: "read" | "write" | "readwrite" = "read";
               if (p.permission === "Readwrite") {
                 permType = "readwrite";
@@ -276,12 +274,12 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Leases ============
 
-  async getLeases(): Promise<EtcdLease[]> {
+  async getLeases(): Promise<Lease[]> {
     return withErrorHandling(async () => {
       const leaseList = await this.client.leaseClient.leaseLeases();
 
       // Get details for each lease
-      const leasesWithDetails: EtcdLease[] = await Promise.all(
+      const leasesWithDetails: Lease[] = await Promise.all(
         (leaseList.leases || []).map(async (lease) => {
           const leaseId = lease.ID;
           try {
@@ -312,7 +310,7 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Members ============
 
-  async getMembers(): Promise<EtcdMember[]> {
+  async getMembers(): Promise<ClusterMember[]> {
     return withErrorHandling(async () => {
       const memberList = await this.client.cluster.memberList({});
 
@@ -329,7 +327,7 @@ export class RealEtcdClient implements EtcdClientInterface {
   async updateMember(
     memberId: string,
     peerURLs: string[],
-  ): Promise<EtcdMember | null> {
+  ): Promise<ClusterMember | null> {
     return withErrorHandling(async () => {
       const memberIdBigInt = BigInt(`0x${memberId}`).toString();
 
@@ -356,7 +354,7 @@ export class RealEtcdClient implements EtcdClientInterface {
     });
   }
 
-  async promoteMember(memberId: string): Promise<EtcdMember | null> {
+  async promoteMember(memberId: string): Promise<ClusterMember | null> {
     return withErrorHandling(async () => {
       const memberIdBigInt = BigInt(`0x${memberId}`).toString();
 
@@ -404,7 +402,7 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Alarms ============
 
-  async getAlarms(): Promise<EtcdAlarm[]> {
+  async getAlarms(): Promise<Alarm[]> {
     return withErrorHandling(async () => {
       const response = await this.client.maintenance.alarm({ action: "Get" });
 
@@ -423,9 +421,9 @@ export class RealEtcdClient implements EtcdClientInterface {
 
   // ============ Endpoints ============
 
-  async getEndpointHealth(): Promise<EtcdEndpointHealth[]> {
+  async getEndpointHealth(): Promise<EndpointHealth[]> {
     return withErrorHandling(async () => {
-      const healthResults: EtcdEndpointHealth[] = [];
+      const healthResults: EndpointHealth[] = [];
 
       for (const endpoint of this.endpoints) {
         const start = performance.now();
@@ -452,9 +450,9 @@ export class RealEtcdClient implements EtcdClientInterface {
     }, []);
   }
 
-  async getEndpointStatus(): Promise<EtcdEndpointStatus[]> {
+  async getEndpointStatus(): Promise<EndpointStatus[]> {
     return withErrorHandling(async () => {
-      const statusResults: EtcdEndpointStatus[] = [];
+      const statusResults: EndpointStatus[] = [];
 
       for (const endpoint of this.endpoints) {
         try {

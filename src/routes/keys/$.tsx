@@ -1,25 +1,7 @@
-import { useState, useMemo } from "react";
-import {
-  createFileRoute,
-  useNavigate,
-  useParams,
-} from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { PageLayout } from "@/components/layout/PageLayout";
 import { Container, Row } from "@/components/Container";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { Button } from "@/components/ui/button";
-import {
-  Folder,
-  File,
-  Search,
-  ChevronRight,
-  MoreHorizontal,
-  ArrowLeft,
-  Copy,
-  Check,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,23 +9,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { keysQueryOptions, keyValueQueryOptions } from "@/lib/queries/etcd";
-import type { EtcdKey } from "@/lib/types/etcd";
+import type { Key } from "@/lib/types/etcd";
+import { cn } from "@/lib/utils";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
+import {
+  ArrowLeft,
+  Check,
+  ChevronRight,
+  Copy,
+  File,
+  Folder,
+  MoreHorizontal,
+  Search,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100, 200] as const;
 type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];
@@ -121,7 +121,7 @@ export function KeyBrowserPage() {
     );
   }
 
-  const handleKeyClick = (key: EtcdKey) => {
+  const handleKeyClick = (key: Key) => {
     // Ensure proper path separator between currentPath and key
     const basePath = currentPath ? currentPath.replace(/\/$/, "") + "/" : "";
     navigate({ to: `/keys/${basePath}${key.key}` });
@@ -368,13 +368,7 @@ function MetadataRow({
   );
 }
 
-function KeyRow({
-  etcdKey,
-  onClick,
-}: {
-  etcdKey: EtcdKey;
-  onClick: () => void;
-}) {
+function KeyRow({ etcdKey, onClick }: { etcdKey: Key; onClick: () => void }) {
   return (
     <Row
       className="flex items-center justify-between cursor-pointer"

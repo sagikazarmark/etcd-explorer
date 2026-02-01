@@ -1,17 +1,17 @@
+import { Key, Shield } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Shield, Key } from "lucide-react";
-import type { EtcdRole } from "@/lib/types/etcd";
+import type { Role } from "@/lib/types/etcd";
 
 interface RolePermissionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  role: EtcdRole | null;
+  role: Role | null;
 }
 
 export function RolePermissionsDialog({

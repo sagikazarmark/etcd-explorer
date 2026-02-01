@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Shield } from "lucide-react";
+import { useState } from "react";
+import { Container, Row } from "@/components/Container";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { PageTitle } from "@/components/layout/PageTitle";
-import { Container, Row } from "@/components/Container";
-import { Button } from "@/components/ui/button";
+import { RolePermissionsDialog } from "@/components/RolePermissionsDialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Empty,
   EmptyDescription,
@@ -13,10 +15,8 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Shield } from "lucide-react";
-import { RolePermissionsDialog } from "@/components/RolePermissionsDialog";
-import { rolesQueryOptions, authStatusQueryOptions } from "@/lib/queries/etcd";
-import type { EtcdRole } from "@/lib/types/etcd";
+import { authStatusQueryOptions, rolesQueryOptions } from "@/lib/queries/etcd";
+import type { Role } from "@/lib/types/etcd";
 
 export const Route = createFileRoute("/auth/roles")({
   loader: async ({ context: { queryClient } }) => {
@@ -32,10 +32,10 @@ function RolesPage() {
   const { data: roles } = useSuspenseQuery(rolesQueryOptions());
   const { data: authStatus } = useSuspenseQuery(authStatusQueryOptions());
 
-  const [selectedRole, setSelectedRole] = useState<EtcdRole | null>(null);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
 
-  const openPermissionsDialog = (role: EtcdRole) => {
+  const openPermissionsDialog = (role: Role) => {
     setSelectedRole(role);
     setPermissionsDialogOpen(true);
   };

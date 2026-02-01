@@ -1,28 +1,28 @@
-import type { EtcdClientInterface } from "./etcd-client-interface";
 import type {
-  EtcdKey,
-  EtcdClusterInfo,
-  EtcdAuthStatus,
-  EtcdUser,
-  EtcdRole,
-  EtcdLease,
-  EtcdAlarm,
-  EtcdMember,
-  EtcdEndpointHealth,
-  EtcdEndpointStatus,
+  Alarm,
+  AuthStatus,
+  ClusterInfo,
+  ClusterMember,
+  EndpointHealth,
+  EndpointStatus,
+  Key,
+  Lease,
+  Role,
+  User,
 } from "../types/etcd";
+import type { EtcdClientInterface } from "./etcd-client-interface";
 import {
-  mockKeys,
-  mockKeyValues,
-  mockClusterInfo,
-  mockAuthStatus,
-  mockUsers,
-  mockRoles,
-  mockLeases,
   mockAlarms,
-  mockMembers,
+  mockAuthStatus,
+  mockClusterInfo,
   mockEndpointHealth,
   mockEndpointStatus,
+  mockKeys,
+  mockKeyValues,
+  mockLeases,
+  mockMembers,
+  mockRoles,
+  mockUsers,
 } from "./mock-data";
 
 /**
@@ -31,29 +31,27 @@ import {
  */
 export class MockEtcdClient implements EtcdClientInterface {
   // In-memory mutable state
-  private users: EtcdUser[] = [...mockUsers];
-  private roles: EtcdRole[] = [...mockRoles];
-  private leases: EtcdLease[] = [...mockLeases];
-  private alarms: EtcdAlarm[] = [...mockAlarms];
-  private members: EtcdMember[] = [...mockMembers];
+  private users: User[] = [...mockUsers];
+  private roles: Role[] = [...mockRoles];
+  private leases: Lease[] = [...mockLeases];
+  private alarms: Alarm[] = [...mockAlarms];
+  private members: ClusterMember[] = [...mockMembers];
   private leaderId: string = mockClusterInfo.leader;
 
   // ============ Cluster ============
 
-  async getClusterInfo(): Promise<EtcdClusterInfo> {
+  async getClusterInfo(): Promise<ClusterInfo> {
     return { ...mockClusterInfo, leader: this.leaderId };
   }
 
   // ============ Keys ============
 
-  async getKeys(path: string): Promise<EtcdKey[]> {
+  async getKeys(path: string): Promise<Key[]> {
     const lookupPath = path ? path.replace(/\/$/, "") + "/" : "/";
     return mockKeys[lookupPath] || [];
   }
 
-  async getKeyValue(
-    key: string,
-  ): Promise<{ value: string; key: EtcdKey | null }> {
+  async getKeyValue(key: string): Promise<{ value: string; key: Key | null }> {
     const keyPath = key.replace(/\/$/, "");
     const value = mockKeyValues[keyPath] || "";
 
@@ -77,36 +75,36 @@ export class MockEtcdClient implements EtcdClientInterface {
 
   // ============ Auth - Users ============
 
-  async getAuthStatus(): Promise<EtcdAuthStatus> {
+  async getAuthStatus(): Promise<AuthStatus> {
     return mockAuthStatus;
   }
 
-  async getUsers(): Promise<EtcdUser[]> {
+  async getUsers(): Promise<User[]> {
     return this.users;
   }
 
   // ============ Auth - Roles ============
 
-  async getRoles(): Promise<EtcdRole[]> {
+  async getRoles(): Promise<Role[]> {
     return this.roles;
   }
 
   // ============ Leases ============
 
-  async getLeases(): Promise<EtcdLease[]> {
+  async getLeases(): Promise<Lease[]> {
     return this.leases;
   }
 
   // ============ Members ============
 
-  async getMembers(): Promise<EtcdMember[]> {
+  async getMembers(): Promise<ClusterMember[]> {
     return this.members;
   }
 
   async updateMember(
     memberId: string,
     peerURLs: string[],
-  ): Promise<EtcdMember | null> {
+  ): Promise<ClusterMember | null> {
     const memberIndex = this.members.findIndex((m) => m.id === memberId);
     if (memberIndex === -1) return null;
 
@@ -116,7 +114,7 @@ export class MockEtcdClient implements EtcdClientInterface {
     return this.members[memberIndex];
   }
 
-  async promoteMember(memberId: string): Promise<EtcdMember | null> {
+  async promoteMember(memberId: string): Promise<ClusterMember | null> {
     const memberIndex = this.members.findIndex((m) => m.id === memberId);
     if (memberIndex === -1) return null;
 
@@ -140,17 +138,17 @@ export class MockEtcdClient implements EtcdClientInterface {
 
   // ============ Alarms ============
 
-  async getAlarms(): Promise<EtcdAlarm[]> {
+  async getAlarms(): Promise<Alarm[]> {
     return this.alarms;
   }
 
   // ============ Endpoints ============
 
-  async getEndpointHealth(): Promise<EtcdEndpointHealth[]> {
+  async getEndpointHealth(): Promise<EndpointHealth[]> {
     return mockEndpointHealth;
   }
 
-  async getEndpointStatus(): Promise<EtcdEndpointStatus[]> {
+  async getEndpointStatus(): Promise<EndpointStatus[]> {
     return mockEndpointStatus;
   }
 }

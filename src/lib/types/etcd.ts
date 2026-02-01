@@ -1,4 +1,4 @@
-export interface EtcdKey {
+export interface Key {
   key: string;
   isDirectory: boolean;
   revision?: number;
@@ -7,7 +7,7 @@ export interface EtcdKey {
   value?: string;
 }
 
-export interface EtcdClusterInfo {
+export interface ClusterInfo {
   version: string;
   clusterName: string;
   endpoints: string[];
@@ -16,42 +16,42 @@ export interface EtcdClusterInfo {
   raftTerm: number;
 }
 
-export interface EtcdAuthStatus {
+export interface AuthStatus {
   enabled: boolean;
 }
 
-export interface EtcdUser {
+export interface User {
   name: string;
   roles: string[];
 }
 
-export interface EtcdRolePermission {
+export interface RolePermission {
   permType: "read" | "write" | "readwrite";
   key: string;
   rangeEnd?: string;
   prefix?: boolean;
 }
 
-export interface EtcdRole {
+export interface Role {
   name: string;
-  permissions: EtcdRolePermission[];
+  permissions: RolePermission[];
 }
 
-export interface EtcdLease {
+export interface Lease {
   id: string;
   ttl: number;
   grantedTtl: number;
   keys: string[];
 }
 
-export type EtcdAlarmType = "NOSPACE" | "CORRUPT" | "NONE";
+export type AlarmType = "NOSPACE" | "CORRUPT" | "NONE";
 
-export interface EtcdAlarm {
+export interface Alarm {
   memberID: string;
-  alarm: EtcdAlarmType;
+  alarm: AlarmType;
 }
 
-export interface EtcdMember {
+export interface ClusterMember {
   id: string;
   name: string;
   peerURLs: string[];
@@ -59,13 +59,13 @@ export interface EtcdMember {
   isLearner: boolean;
 }
 
-export interface EtcdEndpointHealth {
+export interface EndpointHealth {
   endpoint: string;
   health: boolean;
   took: string;
 }
 
-export interface EtcdEndpointStatus {
+export interface EndpointStatus {
   endpoint: string;
   dbSize: number;
   dbSizeInUse: number;
@@ -77,11 +77,11 @@ export interface EtcdEndpointStatus {
 }
 
 export interface DashboardData {
-  clusterInfo: EtcdClusterInfo;
-  authStatus: EtcdAuthStatus;
-  users: EtcdUser[];
-  roles: EtcdRole[];
-  leases: EtcdLease[];
-  alarms: EtcdAlarm[];
-  members: EtcdMember[];
+  clusterInfo: ClusterInfo;
+  authStatus: AuthStatus;
+  users: User[];
+  roles: Role[];
+  leases: Lease[];
+  alarms: Alarm[];
+  members: ClusterMember[];
 }

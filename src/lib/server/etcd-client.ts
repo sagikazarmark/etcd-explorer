@@ -1,8 +1,8 @@
 import { Etcd3, type IOptions } from "etcd3";
 import { env } from "../../env";
 import type { EtcdClientInterface } from "./etcd-client-interface";
-import { RealEtcdClient } from "./real-etcd-client";
 import { MockEtcdClient } from "./mock-etcd-client";
+import { RealEtcdClient } from "./real-etcd-client";
 
 let etcd3Client: Etcd3 | null = null;
 let realClient: RealEtcdClient | null = null;

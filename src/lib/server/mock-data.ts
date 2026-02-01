@@ -1,17 +1,17 @@
 import type {
-  EtcdKey,
-  EtcdClusterInfo,
-  EtcdAuthStatus,
-  EtcdUser,
-  EtcdRole,
-  EtcdLease,
-  EtcdAlarm,
-  EtcdMember,
-  EtcdEndpointHealth,
-  EtcdEndpointStatus,
+  Alarm,
+  AuthStatus,
+  ClusterInfo,
+  ClusterMember,
+  EndpointHealth,
+  EndpointStatus,
+  Key,
+  Lease,
+  Role,
+  User,
 } from "../types/etcd";
 
-export const mockKeys: Record<string, EtcdKey[]> = {
+export const mockKeys: Record<string, Key[]> = {
   "/": [
     {
       key: "leader",
@@ -745,7 +745,7 @@ export const mockKeyValues: Record<string, string> = {
   ),
 };
 
-export const mockClusterInfo: EtcdClusterInfo = {
+export const mockClusterInfo: ClusterInfo = {
   version: "3.5.12",
   clusterName: "etcd-cluster",
   endpoints: ["https://127.0.0.1:2379"],
@@ -754,11 +754,11 @@ export const mockClusterInfo: EtcdClusterInfo = {
   raftTerm: 4,
 };
 
-export const mockAuthStatus: EtcdAuthStatus = {
+export const mockAuthStatus: AuthStatus = {
   enabled: true,
 };
 
-export const mockUsers: EtcdUser[] = [
+export const mockUsers: User[] = [
   { name: "root", roles: ["root"] },
   { name: "admin", roles: ["root", "readwrite"] },
   { name: "developer", roles: ["readwrite"] },
@@ -766,7 +766,7 @@ export const mockUsers: EtcdUser[] = [
   { name: "service-account", roles: ["readwrite"] },
 ];
 
-export const mockRoles: EtcdRole[] = [
+export const mockRoles: Role[] = [
   { name: "root", permissions: [] },
   {
     name: "readwrite",
@@ -786,7 +786,7 @@ export const mockRoles: EtcdRole[] = [
   },
 ];
 
-export const mockLeases: EtcdLease[] = [
+export const mockLeases: Lease[] = [
   {
     id: "694d7d4c0c6c1e0a",
     ttl: 290,
@@ -802,12 +802,12 @@ export const mockLeases: EtcdLease[] = [
   { id: "694d7d4c0c6c1e0c", ttl: 58, grantedTtl: 60, keys: [] },
 ];
 
-export const mockAlarms: EtcdAlarm[] = [
+export const mockAlarms: Alarm[] = [
   { memberID: "8e9e05c52164694d", alarm: "NOSPACE" },
   { memberID: "91bc3c398fb3c146", alarm: "CORRUPT" },
 ];
 
-export const mockMembers: EtcdMember[] = [
+export const mockMembers: ClusterMember[] = [
   {
     id: "8e9e05c52164694d",
     name: "etcd-node-1",
@@ -831,13 +831,13 @@ export const mockMembers: EtcdMember[] = [
   },
 ];
 
-export const mockEndpointHealth: EtcdEndpointHealth[] = [
+export const mockEndpointHealth: EndpointHealth[] = [
   { endpoint: "https://10.0.1.1:2379", health: true, took: "7.682µs" },
   { endpoint: "https://10.0.1.2:2379", health: true, took: "8.234µs" },
   { endpoint: "https://10.0.1.3:2379", health: true, took: "9.102µs" },
 ];
 
-export const mockEndpointStatus: EtcdEndpointStatus[] = [
+export const mockEndpointStatus: EndpointStatus[] = [
   {
     endpoint: "https://10.0.1.1:2379",
     dbSize: 25600000,

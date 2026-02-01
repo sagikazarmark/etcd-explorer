@@ -1,6 +1,6 @@
 import {
-  EtcdError,
   EtcdAuthenticationFailedError,
+  EtcdError,
   EtcdPermissionDeniedError,
 } from "etcd3";
 
