@@ -163,20 +163,20 @@ function RolesPage() {
   return (
     <EtcdLayout
       title="Roles"
+      titleSuffix={
+        !authStatus.enabled && (
+          <Badge variant="secondary" className="text-xs">
+            Auth disabled
+          </Badge>
+        )
+      }
       breadcrumbs={[{ label: "Auth" }, { label: "Roles" }]}
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <p className="text-muted-foreground">
-              Manage roles and their key permissions.
-            </p>
-            {!authStatus.enabled && (
-              <Badge variant="secondary" className="text-xs">
-                Auth disabled
-              </Badge>
-            )}
-          </div>
+          <p className="text-muted-foreground">
+            Manage roles and their key permissions.
+          </p>
           <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
             <Plus className="h-4 w-4" />
             Add role

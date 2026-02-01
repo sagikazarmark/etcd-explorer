@@ -134,20 +134,20 @@ function UsersPage() {
   return (
     <EtcdLayout
       title="Users"
+      titleSuffix={
+        !authStatus.enabled && (
+          <Badge variant="secondary" className="text-xs">
+            Auth disabled
+          </Badge>
+        )
+      }
       breadcrumbs={[{ label: "Auth" }, { label: "Users" }]}
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <p className="text-muted-foreground">
-              Manage etcd users for authentication and access control.
-            </p>
-            {!authStatus.enabled && (
-              <Badge variant="secondary" className="text-xs">
-                Auth disabled
-              </Badge>
-            )}
-          </div>
+          <p className="text-muted-foreground">
+            Manage etcd users for authentication and access control.
+          </p>
           <Button className="gap-2" onClick={() => setAddDialogOpen(true)}>
             <Plus className="h-4 w-4" />
             Add user

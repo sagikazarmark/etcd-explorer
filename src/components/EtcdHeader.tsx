@@ -3,10 +3,15 @@ import { ChevronRight } from "lucide-react";
 
 interface EtcdHeaderProps {
   title?: string;
+  titleSuffix?: React.ReactNode;
   breadcrumbs?: Array<{ label: string; href?: string }>;
 }
 
-export function EtcdHeader({ title, breadcrumbs }: EtcdHeaderProps) {
+export function EtcdHeader({
+  title,
+  titleSuffix,
+  breadcrumbs,
+}: EtcdHeaderProps) {
   return (
     <header className="shrink-0 border-b border-border bg-card px-6 py-4">
       {/* Breadcrumbs */}
@@ -31,7 +36,10 @@ export function EtcdHeader({ title, breadcrumbs }: EtcdHeaderProps) {
 
       {/* Title */}
       {title && (
-        <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
+          {titleSuffix}
+        </div>
       )}
     </header>
   );
