@@ -1,15 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
 import {
-  useSuspenseQuery,
   useMutation,
   useQueryClient,
+  useSuspenseQuery,
 } from "@tanstack/react-query";
-import { PageLayout } from "@/components/layout/PageLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { createFileRoute } from "@tanstack/react-router";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "sonner";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { alarmsQueryOptions, membersQueryOptions } from "@/lib/queries/etcd";
 import { disarmAlarm, disarmAllAlarms } from "@/lib/server/etcd";
 

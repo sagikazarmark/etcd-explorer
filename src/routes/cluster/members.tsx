@@ -16,10 +16,10 @@ export const Route = createFileRoute("/cluster/members")({
       queryClient.ensureQueryData(clusterInfoQueryOptions()),
     ]);
   },
-  component: MembersPage,
+  component: RouteComponent,
 });
 
-function MembersPage() {
+function RouteComponent() {
   const { data: members } = useSuspenseQuery(membersQueryOptions());
   const { data: clusterInfo } = useSuspenseQuery(clusterInfoQueryOptions());
 

@@ -1,13 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { CheckCircle, Crown, XCircle } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Crown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  clusterInfoQueryOptions,
   endpointHealthQueryOptions,
   endpointStatusQueryOptions,
-  clusterInfoQueryOptions,
 } from "@/lib/queries/etcd";
 
 export const Route = createFileRoute("/cluster/endpoints")({
@@ -18,10 +18,10 @@ export const Route = createFileRoute("/cluster/endpoints")({
       queryClient.ensureQueryData(clusterInfoQueryOptions()),
     ]);
   },
-  component: EndpointsPage,
+  component: RouteComponent,
 });
 
-function EndpointsPage() {
+function RouteComponent() {
   const { data: endpointHealth } = useSuspenseQuery(
     endpointHealthQueryOptions(),
   );
@@ -38,10 +38,6 @@ function EndpointsPage() {
   return (
     <PageLayout title="Endpoints">
       <div className="space-y-6">
-        <p className="text-muted-foreground">
-          Endpoint health and status for all cluster members.
-        </p>
-
         {/* Health Check Section */}
         <Card className="etcd-card">
           <CardHeader className="pb-4">
