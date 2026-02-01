@@ -1,5 +1,6 @@
 import { Container, Row } from "@/components/Container";
 import { PageLayout } from "@/components/layout/PageLayout";
+import { PageTitle } from "@/components/layout/PageTitle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
+  Link,
   useNavigate,
   useParams,
 } from "@tanstack/react-router";
@@ -127,8 +129,15 @@ export function KeyBrowserPage() {
     navigate({ to: `/keys/${basePath}${key.key}` });
   };
 
+  const header = (
+    <>
+      <Breadcrumbs items={breadcrumbs} />
+      <PageTitle title="Key Browser" />
+    </>
+  );
+
   return (
-    <PageLayout title="Key Browser" breadcrumbs={breadcrumbs}>
+    <PageLayout header={header}>
       <div className="space-y-4">
         {/* Toolbar */}
         <div className="flex items-center justify-between gap-4">
@@ -271,9 +280,16 @@ function KeyDetailView({
     navigate({ to: `/keys/${parentPath ? parentPath + "/" : ""}` });
   };
 
+  const header = (
+    <>
+      <Breadcrumbs items={breadcrumbs} />
+      <PageTitle title={`/${currentPath}`} />
+    </>
+  );
+
   if (!keyMeta) {
     return (
-      <PageLayout title="Key Not Found" breadcrumbs={breadcrumbs}>
+      <PageLayout header={header}>
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">This key does not exist.</p>
           <Button variant="outline" onClick={handleBack}>
@@ -286,7 +302,7 @@ function KeyDetailView({
   }
 
   return (
-    <PageLayout title={`/${currentPath}`} breadcrumbs={breadcrumbs}>
+    <PageLayout header={header}>
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Value card */}
@@ -407,5 +423,30 @@ function KeyRow({ etcdKey, onClick }: { etcdKey: Key; onClick: () => void }) {
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
     </Row>
+  );
+}
+
+function Breadcrumbs({
+  items,
+}: {
+  items: Array<{ label: string; href?: string }>;
+}) {
+  return (
+    <nav className="flex items-center gap-1.5 text-sm mb-2">
+      {items.map((crumb, index) => (
+        <span key={index} className="flex items-center gap-1.5">
+          {index > 0 && (
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+          )}
+          {crumb.href ? (
+            <Link to={crumb.href} className="text-primary hover:underline">
+              {crumb.label}
+            </Link>
+          ) : (
+            <span className="text-muted-foreground">{crumb.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
   );
 }
