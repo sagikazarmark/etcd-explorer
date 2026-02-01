@@ -288,12 +288,6 @@ function KeyDetailView({
   return (
     <EtcdLayout title={`/${currentPath}`} breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
-        {/* Back button */}
-        <Button variant="ghost" onClick={handleBack} className="gap-2 -ml-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to {parentPath ? `/${parentPath}/` : "/"}
-        </Button>
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Value card */}
           <div className="lg:col-span-2">
