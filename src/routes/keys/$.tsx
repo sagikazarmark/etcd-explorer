@@ -4,12 +4,6 @@ import { PageTitle } from "@/components/layout/PageTitle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Empty,
   EmptyDescription,
   EmptyHeader,
@@ -41,7 +35,6 @@ import {
   Copy,
   File,
   Folder,
-  MoreHorizontal,
   Search,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -406,20 +399,6 @@ function KeyRow({ etcdKey, onClick }: { etcdKey: Key; onClick: () => void }) {
             rev {etcdKey.revision}
           </span>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>View</DropdownMenuItem>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
     </Row>

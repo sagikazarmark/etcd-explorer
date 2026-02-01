@@ -63,18 +63,6 @@ export const getKeyValue = createServerFn({ method: "GET" })
     return getClient().getKeyValue(data.key);
   });
 
-export const putKey = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ key: z.string(), value: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().putKey(data.key, data.value);
-  });
-
-export const deleteKey = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ key: z.string() }))
-  .handler(async ({ data }): Promise<{ success: boolean }> => {
-    return getClient().deleteKey(data.key);
-  });
-
 // ============ Auth - Users ============
 
 export const getAuthStatus = createServerFn({ method: "GET" }).handler(

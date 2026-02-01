@@ -22,8 +22,6 @@ export interface EtcdClientInterface {
   // ============ Keys ============
   getKeys(path: string): Promise<Key[]>;
   getKeyValue(key: string): Promise<{ value: string; key: Key | null }>;
-  putKey(key: string, value: string): Promise<{ success: boolean }>;
-  deleteKey(key: string): Promise<{ success: boolean }>;
 
   // ============ Auth - Users ============
   getAuthStatus(): Promise<AuthStatus>;

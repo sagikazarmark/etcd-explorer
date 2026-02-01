@@ -65,14 +65,6 @@ export class MockEtcdClient implements EtcdClientInterface {
     return { value, key: keyMeta };
   }
 
-  async putKey(_key: string, _value: string): Promise<{ success: boolean }> {
-    return { success: true };
-  }
-
-  async deleteKey(_key: string): Promise<{ success: boolean }> {
-    return { success: true };
-  }
-
   // ============ Auth - Users ============
 
   async getAuthStatus(): Promise<AuthStatus> {

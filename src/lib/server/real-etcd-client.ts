@@ -169,20 +169,6 @@ export class RealEtcdClient implements EtcdClientInterface {
     );
   }
 
-  async putKey(key: string, value: string): Promise<{ success: boolean }> {
-    return withErrorHandling(async () => {
-      await this.client.put(key).value(value);
-      return { success: true };
-    });
-  }
-
-  async deleteKey(key: string): Promise<{ success: boolean }> {
-    return withErrorHandling(async () => {
-      await this.client.delete().key(key);
-      return { success: true };
-    });
-  }
-
   // ============ Auth - Users ============
 
   async getAuthStatus(): Promise<AuthStatus> {
