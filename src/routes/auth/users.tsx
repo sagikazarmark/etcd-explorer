@@ -13,7 +13,7 @@ import { Container, Row } from "@/components/Container";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { GrantRoleDialog } from "@/components/GrantRoleDialog";
-import { UserDetailsDialog } from "@/components/UserDetailsDialog";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +56,6 @@ function UsersPage() {
 
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<EtcdUser | null>(null);
-  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [grantRoleDialogOpen, setGrantRoleDialogOpen] = useState(false);
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
     useState(false);
@@ -112,13 +111,10 @@ function UsersPage() {
 
   const openDialog = (
     user: EtcdUser,
-    dialog: "details" | "grantRole" | "changePassword" | "delete",
+    dialog: "grantRole" | "changePassword" | "delete",
   ) => {
     setSelectedUser(user);
     switch (dialog) {
-      case "details":
-        setDetailsDialogOpen(true);
-        break;
       case "grantRole":
         setGrantRoleDialogOpen(true);
         break;
@@ -196,11 +192,6 @@ function UsersPage() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
-                      onClick={() => openDialog(user, "details")}
-                    >
-                      View details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
                       onClick={() => openDialog(user, "grantRole")}
                     >
                       Grant role
@@ -229,11 +220,6 @@ function UsersPage() {
         onOpenChange={setAddDialogOpen}
         onUserAdded={handleUserAdded}
         roles={roles}
-      />
-      <UserDetailsDialog
-        open={detailsDialogOpen}
-        onOpenChange={setDetailsDialogOpen}
-        user={selectedUser}
       />
       <GrantRoleDialog
         open={grantRoleDialogOpen}
