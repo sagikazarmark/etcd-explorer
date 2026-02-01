@@ -1,6 +1,5 @@
 import { Container, Row } from "@/components/Container";
 import { PageLayout } from "@/components/layout/PageLayout";
-import { PageTitle } from "@/components/layout/PageTitle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -72,11 +71,13 @@ export function KeyBrowserPage() {
   const isDirectory = endsWithSlash || keys.length > 0;
 
   const breadcrumbs = [
-    { label: "Keys", href: "/keys" },
+    // Only make "Keys" a link if we're not on the root page
+    { label: "Keys", href: pathParts.length > 0 ? "/keys" : undefined },
     ...pathParts.map((part, index) => ({
       label: part,
+      // Last item is never a link
       href:
-        index === pathParts.length - 1 && !isDirectory
+        index === pathParts.length - 1
           ? undefined
           : `/keys/${pathParts.slice(0, index + 1).join("/")}/`,
     })),
@@ -122,12 +123,7 @@ export function KeyBrowserPage() {
     navigate({ to: `/keys/${basePath}${key.key}` });
   };
 
-  const header = (
-    <>
-      <Breadcrumbs items={breadcrumbs} />
-      <PageTitle title="Key Browser" />
-    </>
-  );
+  const header = <Breadcrumbs items={breadcrumbs} />;
 
   return (
     <PageLayout header={header}>
@@ -273,12 +269,7 @@ function KeyDetailView({
     navigate({ to: `/keys/${parentPath ? parentPath + "/" : ""}` });
   };
 
-  const header = (
-    <>
-      <Breadcrumbs items={breadcrumbs} />
-      <PageTitle title={`/${currentPath}`} />
-    </>
-  );
+  const header = <Breadcrumbs items={breadcrumbs} />;
 
   if (!keyMeta) {
     return (
@@ -411,18 +402,18 @@ function Breadcrumbs({
   items: Array<{ label: string; href?: string }>;
 }) {
   return (
-    <nav className="flex items-center gap-1.5 text-sm mb-2">
+    <nav className="flex items-center gap-2 text-xl font-semibold">
       {items.map((crumb, index) => (
-        <span key={index} className="flex items-center gap-1.5">
+        <span key={index} className="flex items-center gap-2">
           {index > 0 && (
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
           )}
           {crumb.href ? (
             <Link to={crumb.href} className="text-primary hover:underline">
               {crumb.label}
             </Link>
           ) : (
-            <span className="text-muted-foreground">{crumb.label}</span>
+            <span className="text-foreground">{crumb.label}</span>
           )}
         </span>
       ))}
